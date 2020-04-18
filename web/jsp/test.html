@@ -1,0 +1,43 @@
+<html>
+<head>
+    <style>
+        div{
+            background-color: aqua;
+        }
+        #a{
+            width: 200px;
+            height: 200px;
+        }
+
+    </style>
+<body>
+<table cellspacing="1" class="qr">
+    <div id="a" contenteditable="true" width="20" height="20">dadasdas</div>
+</table>
+<script src="jquery.js"></script>
+<script>
+/*
+    $("#a").click(function () {
+        console.log("dasda")
+        $.ajax({
+            url: "101.230.249.213:8081/ecs-console/api/sso/login?appMenu=openConsole%7Cconsole%7C%2F%23%2Fexpenseclaim%3FbillDefineId%3Dce856f31e99911e9997f5703dc37696d%26billMainId%3D96f669ba36a011ea8fed732411aeace6%26taskId%3Db501748e36a011ea8f2765c7c1f89be2%26billDefineHistoryId%3D2c6dce6835e811eaa352a746e7615f1c%26scene%3DOPERATOR_VIEW&cId=FWtest01&clientType=APP&language=zh_CN&loginName=WX0000120&type=referer",
+            type: 'get',
+            dataType : "jsonp",//数据类型为jsonp
+            jsonp : "jsonpCallback",//服务端用于接收callback调用的function名的参数
+            success: function(data) {
+            }
+        })})
+*/
+
+    $("#a").change(function () {
+        var describe = $("#a").html();
+        console.log("describe::"+describe)
+        $.post("/user/describeUpdate",{des:describe},function (data) {
+            if(data.status==false){
+                alert(data.msg);
+            }
+        })
+    })
+</script>
+</body>
+</html>

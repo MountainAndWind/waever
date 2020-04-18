@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../../js/jquery.js"></script>
+    <script src="../../js/获取当前时间的前63小时的日期.js"></script>
+    <script src="../../js/TimeStampUtil.js"></script>
+</head>
+<body>
+
+</body>
+<script>/*字符串去重*/
+function quchongstr(str){
+    var a = str.match(/\S+/g);//等价于str.split(/\s+/g)// \s空白符，\S非空白符
+    a.sort();
+    for(var i=a.length-1;i>0;i--){
+        if(a[i]==a[i-1]){
+            a.splice(i,1);
+        }
+    }
+    return a.join(" ");
+}
+
+function quchong(str) {
+    var newStr = "";
+    for(var i = 0,len=str.length;i<len;i++) {
+        if(newStr.indexOf(str[i]) == -1){
+            newStr += str[i]
+        }
+    }
+    return newStr
+}
+</script>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button id="b1"></button>
+<button id="b2"></button>
+
+</body>
+
+<script>
+
+    jQuery("#b1").click(function(){
+        /* cookieUtil.set('myCookieName',"3123123",new Date('January 1,2018'),"/"); */
+        var value = getCookie("name")+"A"
+        setCookie("name",value);
+    })
+
+    $("#b2").click(function () {
+        console.log(getCookie("name"))
+    })
+
+    function setCookie(name,value)
+    {
+        var Days = 0.1;
+        var exp = new Date();
+        exp.setTime(exp.getTime() + Days*24*60*60*1000);
+        document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+    }
+
+    //读取cookies
+    function getCookie(name)
+    {
+        var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+
+        if(arr=document.cookie.match(reg))
+
+            return unescape(arr[2]);
+        else
+            return null;
+    }
+
+    //删除cookies
+    function delCookie(name)
+    {
+        var exp = new Date();
+        exp.setTime(exp.getTime() - 1);
+        var cval=getCookie(name);
+        if(cval!=null)
+            document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+    }
+</script>
+</html>
