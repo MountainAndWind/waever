@@ -1,7 +1,8 @@
+
 <script>
 /**
- * 处理额度判断时当币种时CNY 执行标准汇率使用CNY汇率
- * 当币种为非CNY 执行标准采用USD 美国汇率
+ * 处理额度判断时当国家时中国执行标准汇率使用CNY汇率
+ * 当国家为非中国 执行标准采用USD 美国汇率
  * @type {string}
  */
 var sbje_field="field13212"//实报金额
@@ -14,7 +15,9 @@ var startDate="field13224"//开始日期
 var startTime="field13225"//开始时间
 var endTime="field13227"//结束时间
 
+var cldj="field13248"//差旅等级
 var invoice_type_field="field13245";//费用类型field1231
+var fylxMainId="field13269";//费用类型对照表主表id 13269
 var jdKeyFiekds="field13215,field13216,field13217,field13218,field13219,field13220,field13221,field13222"//九段字段名称
 var zhzh="field13198"//账号组合字段
 var zhmc="field13199"//账号名称字段
@@ -26,9 +29,11 @@ var taxJe="field13240"//不含税金额字段
 var taxLimit="field13193"//税额
 var ybxje_field="field13195";//人民币金额
 
-
+var fyrq="field13190"; //费用日期
 var dollarsRate="field13261"//美元汇率
-var country="field13334"//国家
+var country="field13438"//国家
+var city="field13238"//城市
+var gjlb="field13317"//国家类别
 var chinaId="216";
 
 
@@ -98,7 +103,8 @@ function f_getFee(type, s_day, s_time, e_day, e_time,array1) {
 
 
 function setShiBao(num,i,array1 ) {
-    var  type=$("#"+invoice_type_field+"_"+num[i]).val();
+
+    var  type=$("#"+invoice_type_field+"_"+num[i]).val();//费用类型
     var s_day=$("#"+startDate+"_"+num[i]).val();
     var s_time= $("#"+startTime+"_"+num[i]).val();
     var e_day=$("#"+endDate+"_"+num[i]).val();
@@ -108,31 +114,33 @@ function setShiBao(num,i,array1 ) {
     var s_time_r = s_time.split(":").length;
     var e_time_r = e_time.split(":").length;
 
+    //判空并赋值
     if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
         var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
         if(res!=undefined){
-            $("#"+"field12744"+"_"+num[i]).val("CNY");
-            $("#"+"field12744"+"_"+num[i]+"span > span >a").html("CNY");
-            $("#field12559_"+num[i]+"span").html(res);
+            //$("#"+field_name1+"_"+num[i]).val("CNY");
+            // $("#"+field_name1+"_"+num[i]+"span > span >a").html("CNY");
+            $("#"+bz_field+"_"+num[i]+"span").html(res);
+            $("#"+bz_field+"_"+num[i]).val(res);
         }
     }
 
 }
 
-function setCanBu(num){
+function setCanBu(num){//num
     $.get("/work/canbu.jsp",
         function(data, status) {
             array1= data;
-        });
+        });//获取餐补费
 
     if(array1==undefined){
         $.get("/work/canbu.jsp",
             function(data, status) {
                 array1= data;
-            });
+            });//获取失败再次获取
     }
 
-
+    //循环赋值
     for (var i=0;i<num.length;i++){
         setShiBao(num,i,array1 ) ;
 
@@ -146,18 +154,18 @@ function setCanBu(num){
  */
 function setBt(col,num,index) {
     var btzd = $("input[name='needcheck']").val();
-    $("#"+col+"_"+num[index]+"span").html(textValue);
+    var colVal = $("#"+col+"_"+num[index]).val();
+    console.log("colVal::"+colVal)
+    console.log("isNull(colVal)::"+isNull(colVal))
+    if(isNull(colVal)){
+        $("#"+col+"_"+num[index]+"span").html(textValue);
+    }
     $("#"+col+"_"+num[index]).attr('viewtype','1');
     var s="," + col+"_"+num[index];
     if(btzd.indexOf(s)==-1){
         var fieldIds = btzd + "," + col+"_"+num[index] ;
         $("input[name='needcheck']").val(fieldIds);
     }
-    /*if(JudgeBroswer()){//ie
-        document.getElementById(col+"_"+num[index]+"browser").removeAttribute("disabled")
-    }else{
-        $("#"+col+"_"+num[index]+"browser").removeAttr("disabled");
-    }*/
     document.getElementById(col+"_"+num[index]+"browser").removeAttribute("disabled")
 }
 
@@ -165,20 +173,13 @@ function setBt(col,num,index) {
  * 取消必填
  */
 function canBt(col,num,index) {
-    //console.log("canBt")
-    //console.log("col::"+col)
-    //console.log("num::"+num)
-    //console.log("index::"+index)
-
-
     var btzd = $("input[name='needcheck']").val();
-    //console.log("btzd::"+btzd)
+    ////console.log("btzd::"+btzd)
     btzd=btzd.replace(","+col+"_"+num[index],"")
     $("input[name='needcheck']").val(btzd);
-    //console.log("btzd::"+btzd)
-    $("#"+col+"_"+num[index]+"span").html("");
-    $("#"+col+"_"+num[index]).val("");
-
+    ////console.log("btzd::"+btzd)
+    /*$("#"+col+"_"+num[index]+"span").html("");
+    $("#"+col+"_"+num[index]).val("");*/
     $("#"+col+"_"+num[index]+"browser").attr("disabled","disabled");
 }
 
@@ -190,7 +191,41 @@ function isNull(val) {
     }
 }
 
+/**
+ * 比较两个时间
+ * @param dateString1
+ * @param dateString2
+ * @returns {number}
+ */
+function  getDaysBetween(dateString1,dateString2){
+    var  startDate = Date.parse(dateString1);
+    var  endDate = Date.parse(dateString2);
+    var days=(endDate - startDate)/(1*24*60*60*1000);
+    // alert(days);
+    return  days;
+}
 
+/**
+ * 设置天数
+ * @param index
+ */
+function setDay(index) {
+    console.log("set Day")
+    var s_day=$("#"+startDate+"_"+index).val();
+    var e_day=$("#"+endDate+"_"+index).val();
+    var days = getDaysBetween(s_day,e_day);
+    var  type=$("#"+fylxMainId+"_"+index).val();
+    console.log("type::"+type);
+    console.log("days::"+days);
+    if(type!="11"&&type!="15"){
+        if(days>=0){
+            days++;
+        }
+    }
+    console.log("days::"+days);
+    $("#"+daysField+"_"+index).val(days);
+    $("#"+daysField+"_"+index+"span").html(days);
+}
 
 $(document).ready(function(){
     findValidationId(internationalTansInvoceMainId)
@@ -199,11 +234,14 @@ $(document).ready(function(){
     findValidationId(accoomInvoceMainId)
     findValidationId(canBuMainId)
     var num = $("#submitdtlid0").val();
+
+
     num = num.split(",")
+
+
     for (var i = 0; i < num.length; i++) {
         var rowNum = num[i];
-        $("#"+daysField + "_" + rowNum+",#"+invoice_type_field + "_" + rowNum+",#" + sbbzje_field + "_" + rowNum+",#" +field_name1 + "_" + rowNum).bindPropertyChange(function (e) {
-
+        $("#"+daysField + "_" + rowNum+",#" + sbbzje_field + "_" + rowNum+",#" +field_name1 + "_" + rowNum).bindPropertyChange(function (e) {
             var index = e.id.split("_")[1]
             var dayVal = $("#"+daysField+"_"+index).val();
             if(Number(dayVal)<0){
@@ -211,39 +249,55 @@ $(document).ready(function(){
                 top.Dialog.alert("明细第"+index+"行天数不能为负数请修改！！！")
             }
 
-            var index = e.id.split("_")[1]
-
-            var typeVal = $("#"+invoice_type_field+ "_" + index).val();
-
-            /*if(typeVal!=""||typeVal!=null||typeVal!=undefined){
-
-            }*/
-
+            var typeVal = $("#"+invoice_type_field+"_"+index).val();
             var flag = isNull(typeVal);
-            alert("flag::"+flag);
             if(!flag){
                 if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
+                    var  type=$("#"+invoice_type_field+"_"+index).val();
+                    var s_day=$("#"+startDate+"_"+index).val();
+                    var s_time= $("#"+startTime+"_"+index).val();
+                    var e_day=$("#"+endDate+"_"+index).val();
+                    var e_time=$("#"+endTime+"_"+index).val();
+                    var s_day_r = s_day.split("-").length;
+                    var e_day_r = e_day.split("-").length;
+                    var s_time_r = s_time.split(":").length;
+                    var e_time_r = e_time.split(":").length;
+                    if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
+                        var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
+                        if(res!=undefined){
+                            $("#"+bz_field+"_"+index+"span").html(res);
+                            $("#"+bz_field+"_"+index).val(res);
+                        }
+                    }
+                }else{
+                    getBz(num,index);
+                }
+            }
+        });
+        $("#"+invoice_type_field + "_" + rowNum).bindPropertyChange(function (e) {
+            var index = e.id.split("_")[1]
+            var typeVal = $("#"+invoice_type_field+ "_" + index).val();
+            var flag = isNull(typeVal);
+            if(!flag){
+                if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
+                    setCanBu(num)
                     setBt(endTime,num,index);
                     setBt(startTime,num,index);
                 }else{
                     canBt(endTime,num,index);
                     canBt(startTime,num,index);
+                    getBz(num,index);
                 }
             }else{
                 canBt(endTime,num,index);
                 canBt(startTime,num,index);
             }
 
-            var coinVal = $("#" +field_name1 + "_" + index).val();
-
-            //setCoin(num,rowNum,coinVal)
-
-
-            var  type=$("#"+invoice_type_field+"_"+rowNum).val();
-            var s_day=$("#"+startDate+"_"+rowNum).val();
-            var s_time= $("#"+startTime+"_"+rowNum).val();
-            var e_day=$("#"+endDate+"_"+rowNum).val();
-            var e_time=$("#"+endTime+"_"+rowNum).val();
+            var  type=$("#"+invoice_type_field+"_"+index).val();
+            var s_day=$("#"+startDate+"_"+index).val();
+            var s_time= $("#"+startTime+"_"+index).val();
+            var e_day=$("#"+endDate+"_"+index).val();
+            var e_time=$("#"+endTime+"_"+index).val();
             var s_day_r = s_day.split("-").length;
             var e_day_r = e_day.split("-").length;
             var s_time_r = s_time.split(":").length;
@@ -252,14 +306,46 @@ $(document).ready(function(){
             if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
                 var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
                 if(res!=undefined){
-                    $("#"+"field12744"+"_"+rowNum).val("CNY");
-                    $("#"+"field12744"+"_"+rowNum+"span > span >a").html("CNY");
-                    $("#field12559_"+rowNum+"span").html(res);
+                    $("#"+bz_field+"_"+index+"span").html(res);
+                    $("#"+bz_field+"_"+index).val(res);
                 }
             }
         });
 
+        $("#"+fylxMainId + "_" + rowNum).bindPropertyChange(function (e) {
+            var index = e.id.split("_")[1]
+            setDay(index)
+        });
 
+        $("#" +endTime + "_" + rowNum).bindPropertyChange(function (e) {
+            var index = e.id.split("_")[1]
+            var  type=$("#"+invoice_type_field+"_"+index).val();
+            var s_day=$("#"+startDate+"_"+index).val();
+            var s_time= $("#"+startTime+"_"+index).val();
+            var e_day=$("#"+endDate+"_"+index).val();
+            var e_time=$("#"+endTime+"_"+index).val();
+            var s_day_r = s_day.split("-").length;
+            var e_day_r = e_day.split("-").length;
+            var s_time_r = s_time.split(":").length;
+            var e_time_r = e_time.split(":").length;
+
+            if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
+                var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
+                if(res!=undefined){
+                    $("#"+bz_field+"_"+index+"span").html(res);
+                    $("#"+bz_field+"_"+index).val(res);
+                }
+            }
+        });
+
+        /**
+         * 天数计算触发操作
+         */
+        $("#" +startDate + "_" + rowNum+",#" +endDate + "_" + rowNum).bindPropertyChange(function (e) {
+            console.log("startDate::endDate  change")
+            var index = e.id.split("_")[1]
+            setDay(index);
+        });
 
         jdZhFun(num,i);
     }
@@ -277,38 +363,75 @@ $(document).ready(function(){
             var rowNum = $(detileTabId).val().charAt($(detileTabId).val().length-1);
             var num=$("#submitdtlid0").val();
             num = num.split(",")
-            /* $("#"+invoice_type_field + "_" + rowNum+",#" + sbbzje_field + "_" + rowNum).bindPropertyChange(function () {
-
-             });*/
-            $("#"+daysField + "_" + rowNum+",#"+invoice_type_field + "_" + rowNum+",#" + sbbzje_field + "_" + rowNum+",#" +field_name1 + "_" + rowNum).bindPropertyChange(function (e) {
-
+            $("#"+daysField + "_" + rowNum+",#" + sbbzje_field + "_" + rowNum+",#" +field_name1 + "_" + rowNum ).bindPropertyChange(function (e) {
+                var typeVal = $("#"+invoice_type_field+"_"+rowNum).val();
+                var flag = isNull(typeVal);
+                if(!flag){
+                    if(canBuIDs.indexOf(typeVal)==-1){//dayAllowanceIDs
+                        getBz(num,rowNum);
+                    }
+                }
                 var dayVal = $("#"+daysField+"_"+rowNum).val();
                 if(Number(dayVal)<0){
                     var index=Number(rowNum)+1
                     top.Dialog.alert("明细第"+index+"行天数不能为负数请修改！！！")
                 }
+            });
 
+            $("#"+invoice_type_field + "_" + rowNum).bindPropertyChange(function (e) {
                 var typeVal = $("#"+invoice_type_field+"_"+rowNum).val();
-
                 var flag = isNull(typeVal);
                 if(!flag){
                     if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
+                        setCanBu(num)
                         setBt(endTime,num,rowNum);
                         setBt(startTime,num,rowNum);
                     }else{
                         canBt(endTime,num,rowNum);
                         canBt(startTime,num,rowNum);
+                        getBz(num,rowNum);
                     }
                 }else{
                     canBt(endTime,num,rowNum);
                     canBt(startTime,num,rowNum);
                 }
-
-                var coinVal = $("#" +field_name1 + "_" + rowNum).val();
-
-                //setCoin(num,rowNum,coinVal)
-                setCanBu(num)
             });
+
+
+            $("#"+fylxMainId + "_" + rowNum).bindPropertyChange(function (e) {
+                setDay(rowNum)
+            });
+
+
+
+            $("#" +endTime + "_" + rowNum).bindPropertyChange(function (e) {
+                var  type=$("#"+invoice_type_field+"_"+rowNum).val();
+                var s_day=$("#"+startDate+"_"+rowNum).val();
+                var s_time= $("#"+startTime+"_"+rowNum).val();
+                var e_day=$("#"+endDate+"_"+rowNum).val();
+                var e_time=$("#"+endTime+"_"+rowNum).val();
+                var s_day_r = s_day.split("-").length;
+                var e_day_r = e_day.split("-").length;
+                var s_time_r = s_time.split(":").length;
+                var e_time_r = e_time.split(":").length;
+
+                if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
+                    var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
+                    if(res!=undefined){
+                        $("#"+bz_field+"_"+rowNum+"span").html(res);
+                        $("#"+bz_field+"_"+rowNum).val(res);
+                    }
+                }
+
+            });
+
+            /**
+             * 天数计算触发操作
+             */
+            $("#" +startDate + "_" + rowNum+",#" +endDate + "_" + rowNum).bindPropertyChange(function (e) {
+                setDay(rowNum);
+            });
+
             oldDtIdLength = dtIdLength;
         }
         if(oldDtIdLength > dtIdLength){
@@ -318,18 +441,21 @@ $(document).ready(function(){
 
 
     checkCustomize = function (){//
+
         var num = $("#submitdtlid0").val();
         num = num.split(",")
         //获取美国汇率
         for (var i = 0; i < num.length; i++) {
             var index=Number(i)+1;
             var invoiceVal = $("#"+invoice_type_field+"_"+num[i]).val();
-            var field_name1_val = $("#" +field_name1 + "_" + num[i]).val();
             var field_name2_val = $("#" +field_name2 + "_" + num[i]).val();
+
             if(isNull(field_name2_val)||0==field_name2_val){
                 top.Dialog.alert("明细第" + index + "行无法提交，汇率不得为空！！！")
                 return false;
             }
+
+
             var endDateVal = $("#"+endDate+"_"+num[i]).val();
             var endTimeVal = $("#"+endTime+"_"+num[i]).val();
             var startDateVal = $("#"+startDate+"_"+num[i]).val();
@@ -337,9 +463,19 @@ $(document).ready(function(){
             var dollarsRateVal = $("#"+dollarsRate+"_"+num[i]).val();
             var factjeVal = $("#"+sbje_field+"_"+num[i]).val();
             var limitJeVal = $("#"+bz_field+"_"+num[i]).val();
-            //var dayVal = $("#"+day+"_"+num[i]).val();
             var countryVal = $("#"+country+"_"+num[i]).val();
             var factRmb = factjeVal;
+
+            if(canBuIDs.indexOf(invoiceVal)!=-1){//dayAllowanceIDs
+                if(isNull(startTimeVal)){
+                    top.Dialog.alert("明细第"+index+"行无法提交, 开始时间不得为空！！！")
+                    return false;
+                }
+                if(isNull(endTimeVal)){
+                    top.Dialog.alert("明细第"+index+"行无法提交, 结束时间不得为空！！！")
+                    return false;
+                }
+            }
 
             if(isNull(startTimeVal)){
                 startTimeVal="00:00"
@@ -347,23 +483,22 @@ $(document).ready(function(){
             if(isNull(endTimeVal)){
                 endTimeVal="00:00"
             }
-
-
+            //console.log("invoiceVal:"+invoiceVal)
+            //console.log("dayAllowInvoceMainIds+\"-\"+accoomInvoceIDs+\"-\"+internationalTansInvoceIDs+\"-\"+internationalAccomInvoceIDs"+dayAllowInvoceMainIds+"-"+accoomInvoceIDs+"-"+internationalTansInvoceIDs+"-"+internationalAccomInvoceIDs)
+            // console.log("countryVal::"+countryVal)
+            //console.log("chinaId==countryVal"+(chinaId==countryVal))
+            //console.log("factRmb::"+factRmb)
+            //console.log("canBuIDs::"+canBuIDs)
             var start = startDateVal+" "+startTimeVal+":00"
             var end = endDateVal+" "+endTimeVal+":00"
-            //console.log("compareTime::")
+            ////console.log("compareTime::")
             if(!compareTime(start,end)){
                 top.Dialog.alert("明细第"+index+"行无法提交, 开始时间要早于结束时间！！！")
                 return false;
             }
             if(""!=invoiceVal){
-                //console.log("invoiceVal:"+invoiceVal)
-                //console.log("dayAllowInvoceMainIds+\"-\"+accoomInvoceIDs+\"-\"+internationalTansInvoceIDs+\"-\"+internationalAccomInvoceIDs"+dayAllowInvoceMainIds+"-"+accoomInvoceIDs+"-"+internationalTansInvoceIDs+"-"+internationalAccomInvoceIDs)
-                //console.log("countryVal::"+countryVal)
-                //console.log("chinaId==countryVal"+(chinaId==countryVal))
-                if((dayAllowInvoceMainIds+"-"+accoomInvoceIDs+"-"+internationalTansInvoceIDs+"-"+internationalAccomInvoceIDs).indexOf(invoiceVal)!=-1){
+                if((dayAllowInvoceMainIds+"-"+accoomInvoceIDs+"-"+internationalTansInvoceIDs+"-"+internationalAccomInvoceIDs+"-"+canBuIDs).indexOf(invoiceVal)!=-1){
                     if (chinaId==countryVal) {//人名币处理
-                        //var limitRmb = Number(limitJeVal) * Number(dayVal)
                         var limitRmb = Number(limitJeVal)
                         //console.log("limitRmb：："+limitRmb)
                         if (Number(factRmb) >= Number(limitRmb)) {
@@ -371,12 +506,9 @@ $(document).ready(function(){
                             return false;
                         }
                     } else {
-                        //var limitRmb = Number(limitJeVal) * Number(dollarsRateVal) * Number(dayVal) * 1.1;//浮动%10
-                        //console.log("limitJeVal::"+limitJeVal)
-                        //console.log("dollarsRateVal::"+dollarsRateVal)
-                        //console.log("factRmb::"+factRmb)
+                        //  console.log("dollarsRateVal::"+dollarsRateVal)
                         var limitRmb = Number(limitJeVal) * Number(dollarsRateVal)* 1.1;//浮动%10
-                        //console.log("limit：："+limitRmb)
+                        // console.log("limit：："+limitRmb)
                         if (Number(factRmb) >= Number(limitRmb)) {//如果实报金额>执行标准*天数*美金汇率，不允许提交
                             top.Dialog.alert("明细第" + index + "行无法提交，报销额度超过执行标准！！！")
                             return false;
@@ -456,12 +588,84 @@ $(document).click(function () {
     var num = $("#submitdtlid0").val();
     num = num.split(",")
     for (var i = 0; i < num.length; i++) {
-        //var type = $("#" + invoice_type_field + "_" + num[i]).val();
         jdZhFun(num,i);
-        setCanBu(num)
     }
 })
 
+
+function getBz(num,index) {
+    // console.log("getBz")
+    var countryVal = $("#"+country+"_"+num[index]).val();
+    // console.log("countryVal::"+countryVal)
+    var invoiceVal = $("#"+invoice_type_field+"_"+num[index]).val();
+    // console.log("invoiceVal::"+invoiceVal)
+    var cldjVal = $("#"+cldj).val();//
+    //  console.log("cldjVal::"+cldjVal)
+    var cityVal = $("#"+city+"_"+num[index]).val();//
+    // console.log("cityVal::"+cityVal)
+    var daysVal = $("#"+daysField+"_"+num[index]).val();//
+    // console.log("daysVal::"+daysVal)
+    var gjlbVal = $("#"+gjlb+"_"+num[index]).val();//
+    // console.log("gjlbVal::"+gjlbVal)
+    $.ajax({
+        type:"post",
+        url:"/base/getBz.jsp",
+        data: {'country':countryVal,"leixing":invoiceVal,'cldj':cldjVal,"city":cityVal,"days":daysVal,"gjlb":gjlbVal},
+        dataType:"text",
+        async: false,
+        success:function(data){
+            //   console.log("data:"+data)
+            var str=JSON.stringify(data);
+            var msg = "";
+            msg=str.substring(str.indexOf("<body>")+26,str.indexOf("</body>")-12);
+            //   console.log("getBzmsg::"+msg);
+            if("-1.0"==msg||"-1"==msg||"-1.00"==msg){
+                msg=0.0;
+            }
+            $("#"+bz_field+"_"+num[index]).val(msg)
+            $("#"+bz_field+"_"+num[index]+"span").html(msg);
+        },
+        error:function(jqXHR){
+            //   console.log(jqXHR);
+            alert("发生错误："+ jqXHR.status);
+        }
+    });
+}
+
+
+/*
+function getBz(num,index) {
+   // console.log("getBz")
+    var countryVal = $("#"+country+"_"+num[index]).val();
+   // console.log("countryVal::"+countryVal)
+    var invoiceVal = $("#"+invoice_type_field+"_"+num[index]).val();
+   // console.log("invoiceVal::"+invoiceVal)
+    var cldjVal = $("#"+cldj).val();//
+   // console.log("cldjVal::"+cldjVal)
+    var cityVal = $("#"+city+"_"+num[index]).val();//
+  //  console.log("cityVal::"+cityVal)
+    var daysVal = $("#"+daysField+"_"+num[index]).val();//
+  //  console.log("daysVal::"+daysVal)
+    var gjlbVal = $("#"+gjlb+"_"+num[index]).val();//
+   // console.log("gjlbVal::"+gjlbVal)
+
+    $.ajax({
+        type:"GET",
+        url:"/base/getBz.jsp?country="+countryVal+"&leixing="+invoiceVal+"&cldj="+cldjVal+"&city="+cityVal+"&startTime="+startTimeVal+"&gjlb="+gjlbVal,
+        dataType:"text",
+        success:function(data){
+            var str=JSON.stringify(data);
+            var msg = "";
+            msg=str.substring(str.indexOf("<body>")+26,str.indexOf("</body>")-8);
+          //  console.log("getBzmsg::"+msg);
+            $("#"+bz_field+"_"+num[index]).val(msg)
+        },
+        error:function(jqXHR){
+            alert("发生错误："+ jqXHR.status);
+        }
+    });
+}
+*/
 
 
 /**
@@ -551,3 +755,13 @@ regBorwserEvent();
 /*餐补*/
 
 </script>
+
+
+
+
+
+
+
+
+
+
