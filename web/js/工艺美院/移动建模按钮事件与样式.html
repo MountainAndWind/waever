@@ -1,0 +1,28 @@
+    <span class="csshop status0"  onClick="event.cancelBubble = true">31231</span>
+    <script>
+    $(".csshop").click(function () {
+        debugger;
+        var id = $(this).parents("li[class='wev-table-view-row']").attr("data-mainid")
+        $u("/mobilemode/appHomepageView.jsp?appHomepageId=103&CYid="+id);
+    })
+    </script>
+
+
+<style>
+    .csshop{
+        position: absolute;
+        top: 0;
+        right: 23px;
+        display: inline-block;
+        padding: 0 16px;
+        border-radius: 15px;
+        font-size: 12px;
+        line-height: 64px;
+        color: #fff;
+        font-weight: 600;
+    }
+    .csshop.status0{
+        background-color:#999999;
+        height: 100%
+    }
+</style>

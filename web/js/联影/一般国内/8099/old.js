@@ -1,33 +1,34 @@
-/**
- * cså›½å†…
- */
 <script>
-var bz_field="field13710";//æ ‡å‡†å­—æ®µfield1231
-var ybxje_field="field13705";//åº”æŠ¥é”€é‡‘é¢å­—æ®µfield12501  äººåå¸é‡‘é¢
-var sbbzje_field="field13702";//ç”³æŠ¥å¸ç§é‡‘é¢å­—æ®µfield12498
-var sbje_field="field13722"//å®æŠ¥é‡‘é¢å­—æ®µfield12723
-var invoice_type_field="field13755";//è´¹ç”¨ç±»å‹field1231  field12727_0span
-var jdKeyFiekds="field13725,field13726,field13727,field13728,field13729,field13730,field13731,field13732"//ä¹æ®µå­—æ®µåç§°
-var zhzh="field13708"//è´¦å·ç»„åˆå­—æ®µ
-var zhmc="field13709"//è´¦å·åç§°å­—æ®µ
-var taxJe="field13750"//ä¸å«ç¨é‡‘é¢å­—æ®µ
-var taxLimit="field13703"//ç¨é¢
+var ybxje_field="field13195";//ÈËÃñ±Ò½ğ¶î   ¹úÄÚ
+var invoice_type_field="field13245";//·ÑÓÃÀàĞÍfield1231
+var jdKeyFiekds="field13215,field13216,field13217,field13218,field13219,field13220,field13221,field13222"//¾Å¶Î×Ö¶ÎÃû³Æ
+var zhzh="field13198"//ÕËºÅ×éºÏ×Ö¶Î
+var zhmc="field13199"//ÕËºÅÃû³Æ×Ö¶Î
+var sbje_field="field13212"//Êµ±¨½ğ¶î
+var bz_field="field13200";//Ö´ĞĞ±ê×¼
+var daysField="field13228"//ÌìÊı
+var feeType= "field13245";//·ÑÓÃÀàĞÍ
+var endDate="field13226"//½áÊøÈÕÆÚ×Ö¶Î
+var startDate="field13224"//¿ªÊ¼ÈÕÆÚ
+var startTime="field13225"//¿ªÊ¼Ê±¼ä
+var endTime="field13227"//½áÊøÊ±¼ä
+var field_name1="field13231"//¸ù¾İ×Ö¶ÎÃû  ±ÒÖÖ×Ö¶Î
 
-var field_name2="field13701"//è®¾ç½®å€¼å­—æ®µ  æ±‡ç‡å­—æ®µ
-var gs_main_field="field13733";//$("#field12735").val() å…¬å¸ä¸»è¡¨å­—æ®µ
-
-var daysField="field13738"//å¤©æ•°
-var feeType= "field13755";//è´¹ç”¨ç±»å‹
-var endDate="field13736"//ç»“æŸæ—¥æœŸå­—æ®µ
-var startDate="field13734"//å¼€å§‹æ—¥æœŸ
-var startTime="field13735"//
-var endTime="field13737"//
-
-
-var accoomInvoceMainId="15"//è´¹ç”¨ç±»å‹å¯¹ç…§è¡¨ä¸­ä½å®¿ç±»å‹ä¸»é”®id
-/*ä¸‹å¤„æ— éœ€é…ç½®*/
-var accoomInvoceIDs=""//è´¹ç”¨ç±»å‹å¯¹ç…§è¡¨ä¸­ä½å®¿ç±»å‹é›†åˆ
+var taxJe="field13240"//²»º¬Ë°½ğ¶î×Ö¶Î
+var taxLimit="field13193"//Ë°¶î
+var gs_main_field="field13223";//¹«Ë¾Ö÷±í×Ö¶Î  ·ÑÓÃ¹«Ë¾
+var accoomInvoceMainId="15"//·ÑÓÃÀàĞÍ¶ÔÕÕ±íÖĞ×¡ËŞÀàĞÍÖ÷¼üid
+var indoorTransMainId="8"//·ÑÓÃÀàĞÍ¶ÔÕÕ±íÖĞÊÒÄÚ½»Í¨·ÑÖ÷¼üid  ÊÒÄÚ½»Í¨·Ñµ¥±Ê²»µÃ³¬¹ı100Ôª
+var canBuMainId="14"//²Í²¹
+/*ÏÂ´¦ÎŞĞèÅäÖÃ*/
+var accoomInvoceIDs=""//·ÑÓÃÀàĞÍ¶ÔÕÕ±íÖĞ×¡ËŞÀàĞÍ¼¯ºÏ
+var indoorTransIDs=""//·ÑÓÃÀàĞÍ¶ÔÕÕ±íÖĞÊÒÄÚ½»Í¨·Ñ¼¯ºÏ
+var canBuIDs=""//·ÑÓÃÀàĞÍ¶ÔÕÕ±íÖĞ²Í²¹¼¯ºÏ
 var array1;
+/**
+ * ÉèÖÃ±ØÌî
+ */
+var textValue="<img align=absmiddle src='/images/BacoError_wev8.gif' />";
 
 function f_getFee(type, s_day, s_time, e_day, e_time,array1) {
     var rArray = array1.split(";");
@@ -78,6 +79,8 @@ function f_getFee(type, s_day, s_time, e_day, e_time,array1) {
 
 function setShiBao(num,i,array1 ) {
 
+
+
     var  type=$("#"+feeType+"_"+num[i]).val();
     var s_day=$("#"+startDate+"_"+num[i]).val();
     var s_time= $("#"+startTime+"_"+num[i]).val();
@@ -92,18 +95,18 @@ function setShiBao(num,i,array1 ) {
         var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
         if(res!=undefined){
 
-            $("#"+"field12498"+"_"+num[i]).val(res);
+            $("#"+sbje_field+"_"+num[i]).val(res);
         }
     }
 
 }
 
-//ä¸ºé˜²æ­¢æ˜ç»†è¡Œæ·»åŠ è¿‡å¿«ï¼Œæ·»åŠ ä»¥ä¸‹å‚æ•°
-var addBtnName = 'addbutton0'; //æ·»åŠ æ˜ç»†è¡Œçš„æŒ‰é’®ID -- addbutton(0,1,2...)
-var detileAddId = 0 ; //æ˜ç»†è¡¨åºå·ï¼Œä¸detileTabIdã€addBtnNameæœ€åä¸€ä½ç›¸åŒï¼ˆç¬¬ä¸€ä¸ªæ˜ç»†è¡¨ä¸º0ï¼Œä¾æ­¤å åŠ ï¼‰
-var intTime = 1000; //æ§åˆ¶æ˜ç»†è¡Œæ·»åŠ çš„é—´éš”æ—¶é—´ï¼Œå•ä½ï¼šæ¯«ç§’ã€‚å»ºè®®1000
+//Îª·ÀÖ¹Ã÷Ï¸ĞĞÌí¼Ó¹ı¿ì£¬Ìí¼ÓÒÔÏÂ²ÎÊı
+var addBtnName = 'addbutton0'; //Ìí¼ÓÃ÷Ï¸ĞĞµÄ°´Å¥ID -- addbutton(0,1,2...)
+var detileAddId = 0 ; //Ã÷Ï¸±íĞòºÅ£¬ÓëdetileTabId¡¢addBtnName×îºóÒ»Î»ÏàÍ¬£¨µÚÒ»¸öÃ÷Ï¸±íÎª0£¬ÒÀ´Ëµş¼Ó£©
+var intTime = 1000; //¿ØÖÆÃ÷Ï¸ĞĞÌí¼ÓµÄ¼ä¸ôÊ±¼ä£¬µ¥Î»£ººÁÃë¡£½¨Òé1000
 /*
-   æ·»åŠ å¼¹æ¡†å‰äº‹ä»¶ï¼Œé˜²æ­¢æ·»åŠ æ˜ç»†è¡Œçš„é€Ÿåº¦è¿‡å¿«
+   Ìí¼Óµ¯¿òÇ°ÊÂ¼ş£¬·ÀÖ¹Ìí¼ÓÃ÷Ï¸ĞĞµÄËÙ¶È¹ı¿ì
 */
 var regBorwserEvent = function() {
     var time1 = new Date();
@@ -114,7 +117,7 @@ var regBorwserEvent = function() {
         if (time2.getTime()-time1.getTime() < intTime) {
             time1 = time2;
             return ;
-            alert('æ“ä½œå¤ªå¿«å•¦ï¼');
+            alert('²Ù×÷Ì«¿ìÀ²£¡');
         } else {
             time1 = time2;
             oldClickEvent(event);
@@ -123,45 +126,166 @@ var regBorwserEvent = function() {
 };
 regBorwserEvent();
 
+
+/**
+ * ÉèÖÃ±ØÌî
+ */
+function setBt(col,num,index) {
+    var btzd = $("input[name='needcheck']").val();
+    var colVal = $("#"+col+"_"+num[index]).val();
+    if(isNull(colVal)){
+        $("#"+col+"_"+num[index]+"span").html(textValue);
+    }
+    $("#"+col+"_"+num[index]).attr('viewtype','1');
+    var s="," + col+"_"+num[index];
+    if(btzd.indexOf(s)==-1){
+        var fieldIds = btzd + "," + col+"_"+num[index] ;
+        $("input[name='needcheck']").val(fieldIds);
+    }
+    document.getElementById(col+"_"+num[index]+"browser").removeAttribute("disabled")
+}
+
+/**
+ * È¡Ïû±ØÌî
+ */
+function canBt(col,num,index) {
+    var btzd = $("input[name='needcheck']").val();
+    btzd=btzd.replace(","+col+"_"+num[index],"")
+    $("input[name='needcheck']").val(btzd);
+    $("#"+col+"_"+num[index]+"browser").attr("disabled","disabled");
+    $("#"+col+"_"+num[index]+"span img").remove()
+}
+
+function isNull(val) {
+    if(""==val||val==null||val==undefined){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+
 $(document).ready(function(){
-    console.log("ready")
+
+    findValidationId(accoomInvoceMainId)
+    findValidationId(indoorTransMainId)
+    findValidationId(canBuMainId)
+
     var num = $("#submitdtlid0").val();
     num = num.split(",")
     for (var i = 0; i < num.length; i++) {
-        //gsFz(num,i);
         var rowNum = num[i];
+        $("#"+ invoice_type_field + "_" + rowNum).bindPropertyChange(function (e) {
+            var index = e.id.split("_")[1]
+            var typeVal = $("#"+invoice_type_field+ "_" + index).val();
+            var flag = isNull(typeVal);
+            if(!flag){
+                if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
+                    setBt(endTime,num,index);
+                    setBt(startTime,num,index);
+                }else{
+                    canBt(endTime,num,index);
+                    canBt(startTime,num,index);
+                }
+            }else{
+                canBt(endTime,num,index);
+                canBt(startTime,num,index);
+            }
+        });
+
         $("#"+daysField + "_" + rowNum).bindPropertyChange(function (e) {
             var index = e.id.split("_")[1]
             var dayVal = $("#"+daysField+"_"+index).val();
             if(Number(dayVal)<0){
                 var index=Number(index)+1
-                top.Dialog.alert("æ˜ç»†ç¬¬"+index+"è¡Œå¤©æ•°ä¸èƒ½ä¸ºè´Ÿæ•°è¯·ä¿®æ”¹ï¼ï¼ï¼")
+                top.Dialog.alert("Ã÷Ï¸µÚ"+index+"ĞĞÌìÊı²»ÄÜÎª¸ºÊıÇëĞŞ¸Ä£¡£¡£¡")
             }
         });
+
+
+        $("#"+endTime + "_" + rowNum).bindPropertyChange(function (e) {
+            var index = e.id.split("_")[1]
+            var dayVal = $("#"+daysField+"_"+index).val();
+            var  type=$("#"+feeType+"_"+rowNum).val();
+            var s_day=$("#"+startDate+"_"+rowNum).val();
+            var s_time= $("#"+startTime+"_"+rowNum).val();
+            var e_day=$("#"+endDate+"_"+rowNum).val();
+            var e_time=$("#"+endTime+"_"+rowNum).val();
+            var s_day_r = s_day.split("-").length;
+            var e_day_r = e_day.split("-").length;
+            var s_time_r = s_time.split(":").length;
+            var e_time_r = e_time.split(":").length;
+            if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
+                var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
+                if(res!=undefined){
+                    $("#"+bz_field+"_"+rowNum+"span").html(res);
+                    $("#"+bz_field+"_"+rowNum).val(res);
+                }}
+        });
+
+
         jdZhFun(num,i);
     }
-    findValidationId(accoomInvoceMainId)
-
 
     var dtIdLength = 0;
     var oldDtIdLength = 0;
     /*
-    å½“æ˜ç»†è¡Œæ•°é‡å¢åŠ æ—¶ï¼Œä¸ºå¢åŠ çš„æ˜ç»†è¡Œæ·»åŠ å‡½æ•°ï¼›å½“æ˜ç»†è¡Œæ•°é‡å‡å°‘æ—¶ï¼Œé‡æ–°è®¡ç®—æ€»é¢
+    µ±Ã÷Ï¸ĞĞÊıÁ¿Ôö¼ÓÊ±£¬ÎªÔö¼ÓµÄÃ÷Ï¸ĞĞÌí¼Óº¯Êı£»µ±Ã÷Ï¸ĞĞÊıÁ¿¼õÉÙÊ±£¬ÖØĞÂ¼ÆËã×Ü¶î
      */
     var detileTabId = "#submitdtlid0";
     $(detileTabId).bindPropertyChange(function () {
         dtIdLength = jQuery(detileTabId).val().split(",").length;
-        if (oldDtIdLength < dtIdLength){
-            var rowNum = $(detileTabId).val().charAt($(detileTabId).val().length-1);
+        if (oldDtIdLength <= dtIdLength){
             var num=$("#submitdtlid0").val();
             num = num.split(",")
+            var rowNum = num[num.length-1];
+
             $("#"+daysField + "_" + rowNum).bindPropertyChange(function (e) {
                 var dayVal = $("#"+daysField+"_"+rowNum).val();
                 if(Number(dayVal)<0){
                     var index=Number(rowNum)+1
-                    top.Dialog.alert("æ˜ç»†ç¬¬"+index+"è¡Œå¤©æ•°ä¸èƒ½ä¸ºè´Ÿæ•°è¯·ä¿®æ”¹ï¼ï¼ï¼")
+                    top.Dialog.alert("Ã÷Ï¸µÚ"+index+"ĞĞÌìÊı²»ÄÜÎª¸ºÊıÇëĞŞ¸Ä£¡£¡£¡")
                 }
             });
+
+            $("#" + invoice_type_field + "_" + rowNum).bindPropertyChange(function (e) {
+                var typeVal = $("#"+invoice_type_field+"_"+rowNum).val();
+                var flag = isNull(typeVal);
+                if(!flag){
+                    if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
+                        setBt(endTime,num,rowNum);
+                        setBt(startTime,num,rowNum);
+                    }else{
+                        canBt(endTime,num,rowNum);
+                        canBt(startTime,num,rowNum);
+                    }
+                }else{
+                    canBt(endTime,num,rowNum);
+                    canBt(startTime,num,rowNum);
+                }
+            });
+
+            $("#" + endTime + "_" + rowNum).bindPropertyChange(function (e) {
+                var  type=$("#"+feeType+"_"+rowNum).val();
+                var s_day=$("#"+startDate+"_"+rowNum).val();
+                var s_time= $("#"+startTime+"_"+rowNum).val();
+                var e_day=$("#"+endDate+"_"+rowNum).val();
+                var e_time=$("#"+endTime+"_"+rowNum).val();
+                var s_day_r = s_day.split("-").length;
+                var e_day_r = e_day.split("-").length;
+                var s_time_r = s_time.split(":").length;
+                var e_time_r = e_time.split(":").length;
+                //alert("s_day_r£º"+s_day_r+"e_day_r:"+e_day_r+"s_time_r:"+s_time_r+"e_time_r£º"+e_time_r)
+                if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
+                    //alert("inner")
+                    var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
+                    //alert("res:"+res)
+                    if(res!=undefined){
+                        $("#"+bz_field+"_"+rowNum+"span").html(res);
+                        $("#"+bz_field+"_"+rowNum).val(res);
+                    }}
+            });
+
             oldDtIdLength = dtIdLength;
         }
         if(oldDtIdLength > dtIdLength){
@@ -170,7 +294,6 @@ $(document).ready(function(){
     });
 
     checkCustomize = function (){
-        console.log("checkCustomize")
         var num = $("#submitdtlid0").val();
         num = num.split(",");
         var errors="";
@@ -185,30 +308,40 @@ $(document).ready(function(){
             var invoiceVal = $("#"+invoice_type_field+"_"+num[i]).val();
             var nowDate = getNowDate();
             var days = getDays(endDateVal,nowDate)
-            var day_val=$("#"+daysField+"_"+num[i]).val()
+            if(isNull(startTimeVal)){
+                startTimeVal="00:00"
+            }
+            if(isNull(endTimeVal)){
+                endTimeVal="00:00"
+            }
             var start = startDateVal+" "+startTimeVal+":00"
             var end = endDateVal+" "+endTimeVal+":00"
             if(!compareTime(start,end)){
-                top.Dialog.alert("æ˜ç»†ç¬¬"+index+"è¡Œæ— æ³•æäº¤, å¼€å§‹æ—¶é—´è¦æ—©äºç»“æŸæ—¶é—´ï¼ï¼ï¼")
+                top.Dialog.alert("Ã÷Ï¸µÚ"+index+"ĞĞÎŞ·¨Ìá½», ¿ªÊ¼Ê±¼äÒªÔçÓÚ½áÊøÊ±¼ä£¡£¡£¡")
                 return false;
             }
+
             if(Number(days)>60){
-                top.Dialog.alert("æ˜ç»†ç¬¬"+index+"è¡Œæ— æ³•æäº¤ï¼Œè´¹ç”¨å‘ç”Ÿæ—¥æœŸå·²è¶…è¿‡60å¤©ï¼ï¼ï¼")
+                top.Dialog.alert("Ã÷Ï¸µÚ"+index+"ĞĞÎŞ·¨Ìá½»£¬·ÑÓÃ·¢ÉúÈÕÆÚÒÑ³¬¹ı60Ìì£¡£¡£¡")
                 return false;
             }
-            console.log("invoiceVal::"+invoiceVal)
             if(invoiceVal!=""){
-                console.log("accoomInvoceIDs::"+accoomInvoceIDs)
+
                 if(accoomInvoceIDs.indexOf(invoiceVal)!=-1) {
-                    var compareJe = Number(limitJeVal)*Number(day_val);
-                    console.log("ä¹˜å‡ å¤©æ•°ä¹‹å’Œï¼šï¼š"+compareJe)
-                    console.log("å®æŠ¥é‡‘é¢ï¼šï¼š"+factjeVal)
+                    /* var compareJe = Number(limitJeVal)*Number(day_val);*/
+                    var compareJe = Number(limitJeVal);
                     if(Number(factjeVal)>Number(compareJe)){
-                        top.Dialog.alert("æ˜ç»†ç¬¬"+index+"è¡Œæ— æ³•æäº¤ï¼ŒæŠ¥é”€é¢åº¦è¶…è¿‡æ‰§è¡Œæ ‡å‡†ï¼ï¼ï¼")
+                        top.Dialog.alert("Ã÷Ï¸µÚ"+index+"ĞĞÎŞ·¨Ìá½»£¬±¨Ïú¶î¶È³¬¹ıÖ´ĞĞ±ê×¼£¡£¡£¡")
+                        return false;
+                    }
+                }else if(indoorTransIDs.indexOf(invoiceVal)!=-1){
+                    if(Number(factjeVal)>100){
+                        top.Dialog.alert("Ã÷Ï¸µÚ"+index+"ĞĞÎŞ·¨Ìá½»£¬ÊÒÄÚ½»Í¨·Ñµ¥ĞĞ²»µÃ³¬¹ı100Ôª£¡£¡£¡")
                         return false;
                     }
                 }
             }
+
 
             var  type=$("#"+feeType+"_"+num[i]).val();
             var s_day=$("#"+startDate+"_"+num[i]).val();
@@ -222,14 +355,14 @@ $(document).ready(function(){
 
             if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
                 var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
-                if(res!=undefined &&Number(   $("#"+"field12498"+"_"+num[i]).val()  )>res ){
-                    errors=errors+"\næ˜ç»†ç¬¬"+index+"è¡Œ,é¢åº¦ä¸º:"+res
+                if(res!=undefined &&Number(   $("#"+ sbje_field +"_"+num[i]).val()  )>res ){
+                    errors=errors+"\nÃ÷Ï¸µÚ"+index+"ĞĞ,¶î¶ÈÎª:"+res
                 }
             }
-            jdZhFun(num,i);
         }
+
         if(errors!=""){
-            top.Dialog.alert("æ˜ç»†æ— æ³•æäº¤ï¼ŒæŠ¥é”€é¢åº¦è¶…è¿‡æ‰§è¡Œæ ‡å‡†!"+errors);
+            top.Dialog.alert("Ã÷Ï¸ÎŞ·¨Ìá½»£¬±¨Ïú¶î¶È³¬¹ıÖ´ĞĞ±ê×¼!"+errors);
             return false;
         }
         return true;
@@ -237,7 +370,7 @@ $(document).ready(function(){
 })
 
 /**
- * æ¯”è¾ƒä¸¤ä¸ªæ—¶é—´ï¼ˆyyyy-MM-dd HH:mm:ssï¼‰
+ * ±È½ÏÁ½¸öÊ±¼ä£¨yyyy-MM-dd HH:mm:ss£©
  * @param startTime
  * @param endTime
  * @returns {string}
@@ -260,7 +393,7 @@ function compareTime(startTime,endTime) {
 }
 
 /**
- * è·å–å½“å‰æ—¶é—´
+ * »ñÈ¡µ±Ç°Ê±¼ä
  * @returns {string}
  */
 function getNowDate() {
@@ -280,13 +413,13 @@ function getNowDate() {
 
 
 /**
- * è®¡ç®—ä¸¤ä¸ªæ—¥æœŸç›¸å·®å€¼
+ * ¼ÆËãÁ½¸öÈÕÆÚÏà²îÖµ
  * @param strDateStart
  * @param strDateEnd
  * @returns {number | *}
  */
 function getDays(strDateStart, strDateEnd) {
-    var strSeparator = "-"; //æ—¥æœŸåˆ†éš”ç¬¦
+    var strSeparator = "-"; //ÈÕÆÚ·Ö¸ô·û
     var oDate1;
     var oDate2;
     var iDays;
@@ -294,12 +427,12 @@ function getDays(strDateStart, strDateEnd) {
     oDate2 = strDateEnd.split(strSeparator);
     var strDateS = new Date(oDate1[0], oDate1[1] - 1, oDate1[2]);
     var strDateE = new Date(oDate2[0], oDate2[1] - 1, oDate2[2]);
-    iDays = parseInt(Math.abs(strDateS - strDateE) / 1000 / 60 / 60 / 24)//æŠŠç›¸å·®çš„æ¯«ç§’æ•°è½¬æ¢ä¸ºå¤©æ•°
+    iDays = parseInt(Math.abs(strDateS - strDateE) / 1000 / 60 / 60 / 24)//°ÑÏà²îµÄºÁÃëÊı×ª»»ÎªÌìÊı
     return iDays;
 }
 
 /**
- * ç‚¹å‡»äº‹ä»¶è§¦å‘éªŒè¯èµ‹å€¼
+ * µã»÷ÊÂ¼ş´¥·¢ÑéÖ¤¸³Öµ
  */
 $(document).click(function () {
     var num = $("#submitdtlid0").val();
@@ -321,14 +454,35 @@ $(document).click(function () {
     }
 
 
+    try{
+
+
+        for (var i = 0; i < num.length; i++) {
 
 
 
+            var  type=$("#"+feeType+"_"+num[i]).val();
+            var s_day=$("#"+startDate+"_"+num[i]).val();
+            var s_time= $("#"+startTime+"_"+num[i]).val();
+            var e_day=$("#"+endDate+"_"+num[i]).val();
+            var e_time=$("#"+endTime+"_"+num[i]).val();
+
+            var s_day_r = s_day.split("-").length;
+            var e_day_r = e_day.split("-").length;
+            var s_time_r = s_time.split(":").length;
+            var e_time_r = e_time.split(":").length;
+            if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
+
+                var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
+                if(res!=undefined){
+                    $("#"+bz_field+"_"+num[i]+"span").html(res);
+                    $("#"+bz_field+"_"+num[i]).val(res);
+                }}}}catch(e){}
 })
 
 
 /**
- * ä¹æ®µkey val èµ‹å€¼
+ * ¾Å¶Îkey val ¸³Öµ
  * @param num
  * @param i
  * @param type
@@ -366,7 +520,7 @@ function jdZhFun(num,i) {
 }
 
 /**
- * æŸ¥æ‰¾è´¹ç”¨ç±»å‹å¯¹ç…§è¡¨ä¸­å­˜åœ¨çš„æ˜ç»†
+ * ²éÕÒ·ÑÓÃÀàĞÍ¶ÔÕÕ±íÖĞ´æÔÚµÄÃ÷Ï¸
  * @param val
  */
 function findValidationId(val) {///base/findInvoiceTypById.jsp?fieldVal=3
@@ -380,13 +534,16 @@ function findValidationId(val) {///base/findInvoiceTypById.jsp?fieldVal=3
             var str=JSON.stringify(data);
             msg=str.substring(str.indexOf("<body>")+26,str.indexOf("</body>")-8);
             if(accoomInvoceMainId==val){
-                accoomInvoceIDs=msg//è´¹ç”¨ç±»å‹å¯¹ç…§è¡¨ä¸­ç”µè¯è´¹é›†åˆ
+                accoomInvoceIDs=msg//·ÑÓÃÀàĞÍ¶ÔÕÕ±íÖĞµç»°·Ñ¼¯ºÏ
+            }else if(indoorTransMainId==val){
+                indoorTransIDs=msg//·ÑÓÃÀàĞÍ¶ÔÕÕ±íÖĞ½á»éÀñ½ğ¼¯ºÏ
+            }else if(canBuMainId==val){
+                canBuIDs=msg//·ÑÓÃÀàĞÍ¶ÔÕÕ±íÖĞ½á»éÀñ½ğ¼¯ºÏ
             }
         },
         error:function(jqXHR){
-            alert("å‘ç”Ÿé”™è¯¯ï¼š"+ jqXHR.status);
+            alert("·¢Éú´íÎó£º"+ jqXHR.status);
         }
     });
 }
-
 </script>

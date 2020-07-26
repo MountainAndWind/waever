@@ -52,97 +52,6 @@ var canBuIDs=""//费用类型对照表中餐补集合
  */
 var textValue="<img align=absmiddle src='/images/BacoError_wev8.gif' />";
 
-/*餐补-------------------------------------------------------*/
-function f_getFee(type, s_day, s_time, e_day, e_time,array1) {
-    var rArray = array1.split(";");
-    var result;
-    var search = rArray.indexOf(type);
-    if (search < rArray.length - 1 && search >= 0) {
-        var s_day_r = s_day.split("-");
-        var e_day_r = e_day.split("-");
-        var s_time_r = s_time.split(":");
-        var e_time_r = e_time.split(":");
-
-
-        var start_d = new Date(s_day_r[0], Number(s_day_r[1]) - 1, s_day_r[2], 0, 0, 0, 0);
-        var end_d = new Date(e_day_r[0], Number(e_day_r[1]) - 1, e_day_r[2], 0, 0, 0, 0);
-        var start_t = new Date(1900, Number("1") - 1, 1, s_time_r[0], s_time_r[1], 0, 0);
-        var end_t = new Date(1900, Number("1") - 1, 1, e_time_r[0], e_time_r[1], 0, 0);
-        if (start_d.getTime() == end_d.getTime()) {
-            var dif = end_t.getTime() - start_t.getTime();
-            if (dif >= 12 * 60 * 60 * 1000) {
-                return 100;
-            } else if (dif >= 10 * 60 * 60 * 1000) {
-                return 70;
-            } else if (dif >= 4 * 60 * 60 * 1000) {
-                return 35;
-            } else {
-                return 0;
-            }
-        } else {
-            var middle = (end_d.getTime() - start_d.getTime()) / (24 * 60 * 60 * 1000) - 1;
-            var start = 0;
-            var end = 0;
-            var m_t = new Date(1900, Number("1") - 1, 1, 12, 0, 0, 0);
-            if (start_t.getTime() > m_t.getTime()) {
-                start = 50;
-            } else {
-                start = 100;
-            }
-            if (end_t.getTime() >= m_t.getTime()) {
-                end = 100;
-            } else {
-                end = 50;
-            }
-            return 100 * middle + start + end;
-        }
-    }
-}
-
-
-function setShiBao(num,i,array1 ) {
-    var  type=$("#"+invoice_type_field+"_"+num[i]).val();
-    var s_day=$("#"+startDate+"_"+num[i]).val();
-    var s_time= $("#"+startTime+"_"+num[i]).val();
-    var e_day=$("#"+endDate+"_"+num[i]).val();
-    var e_time=$("#"+endTime+"_"+num[i]).val();
-    var s_day_r = s_day.split("-").length;
-    var e_day_r = e_day.split("-").length;
-    var s_time_r = s_time.split(":").length;
-    var e_time_r = e_time.split(":").length;
-
-    if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
-        var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
-        if(res!=undefined){
-            $("#"+"field12744"+"_"+num[i]).val("CNY");
-            $("#"+"field12744"+"_"+num[i]+"span > span >a").html("CNY");
-            $("#field12559_"+num[i]+"span").html(res);
-        }
-    }
-
-}
-
-function setCanBu(num){
-    $.get("/work/canbu.jsp",
-        function(data, status) {
-            array1= data;
-        });
-
-    if(array1==undefined){
-        $.get("/work/canbu.jsp",
-            function(data, status) {
-                array1= data;
-            });
-    }
-
-
-    for (var i=0;i<num.length;i++){
-        setShiBao(num,i,array1 ) ;
-
-    }
-}
-/*餐补-------------------------------------------------------*/
-
 
 /**
  * 设置必填
@@ -153,29 +62,24 @@ function setBt(col,num,index) {
     $("#"+col+"_"+num[index]).attr('viewtype','1');
     var fieldIds = btzd + "," + col+"_"+num[index] ;
     $("input[name='needcheck']").val(fieldIds);
-    /*if(JudgeBroswer()){//ie
+    console.log("$(\"#\"+col+\"_\"+num[index]+\"browser\").disabled"+($("#"+col+"_"+num[index]+"browser").disabled))
+    if($("#"+col+"_"+num[index]+"browser").disabled){
         document.getElementById(col+"_"+num[index]+"browser").removeAttribute("disabled")
-    }else{
-        $("#"+col+"_"+num[index]+"browser").removeAttr("disabled");
-    }*/
-    document.getElementById(col+"_"+num[index]+"browser").removeAttribute("disabled")
+    }
 }
 
 /**
  * 取消必填
  */
 function canBt(col,num,index) {
-    /*console.log("canBt")
-    console.log("col::"+col)
-    console.log("num::"+num)
-    console.log("index::"+index)*/
+    console.log("canBt")
     var btzd = $("input[name='needcheck']").val();
     btzd=btzd.replace(","+col+"_"+num[index],"")
     $("input[name='needcheck']").val(btzd);
     $("#"+col+"_"+num[index]+"span").html("");
     $("#"+col+"_"+num[index]).val("");
-
     $("#"+col+"_"+num[index]+"browser").attr("disabled","disabled");
+
 }
 
 function isNull(val) {
@@ -186,45 +90,6 @@ function isNull(val) {
     }
 }
 
-/**
- * 设置币种符号
- * @param num
- * @param rowNum
- * @param coinVal
- */
-function setCoin(num,rowNum,coinVal) {
-
-    if("CNY"==coinVal){
-        $("#"+fuhaoField+"_"+rowNum).val("￥")
-        $("#"+fuhaoField+"_"+rowNum+"span").html("￥")
-    }else if("USD"==coinVal){
-        $("#"+fuhaoField+"_"+rowNum).val("$")
-        $("#"+fuhaoField+"_"+rowNum+"span").html("$")
-    }
-}
-
-/**
- * 判断浏览器类型
- * ie返回true
- * @constructor
- */
-function JudgeBroswer() {
-    alert("JudgeBroswer")
-    var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
-    var isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1; //判断是否IE<11浏览器
-    var isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf("rv:11.0") > -1;
-    if(isIE ) {
-        var reIE = new RegExp("MSIE (\\d+\\.\\d+);");
-        reIE.test(userAgent);
-        var fIEVersion = parseFloat(RegExp["$1"]);
-        alert("fIEVersion"+fIEVersion)
-        return true;
-    } else if(isIE11){
-        return true;
-    }else{
-        return false;
-    }
-}
 
 $(document).ready(function(){
     findValidationId(internationalTansInvoceMainId)
@@ -237,7 +102,6 @@ $(document).ready(function(){
     for (var i = 0; i < num.length; i++) {
         var rowNum = num[i];
         $("#"+daysField + "_" + rowNum+",#"+invoice_type_field + "_" + rowNum+",#" + sbbzje_field + "_" + rowNum+",#" +field_name1 + "_" + rowNum).bindPropertyChange(function (e) {
-
             var index = e.id.split("_")[1]
             var dayVal = $("#"+daysField+"_"+index).val();
             if(Number(dayVal)<0){
@@ -249,12 +113,9 @@ $(document).ready(function(){
 
             var typeVal = $("#"+invoice_type_field+ "_" + index).val();
 
-            /*if(typeVal!=""||typeVal!=null||typeVal!=undefined){
-
-            }*/
 
             var flag = isNull(typeVal);
-            alert("flag::"+flag);
+            console.log("flag::"+flag);
             if(!flag){
                 if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
                     setBt(endTime,num,index);
@@ -266,30 +127,6 @@ $(document).ready(function(){
             }else{
                 canBt(endTime,num,index);
                 canBt(startTime,num,index);
-            }
-
-            var coinVal = $("#" +field_name1 + "_" + index).val();
-
-            //setCoin(num,rowNum,coinVal)
-
-
-            var  type=$("#"+invoice_type_field+"_"+rowNum).val();
-            var s_day=$("#"+startDate+"_"+rowNum).val();
-            var s_time= $("#"+startTime+"_"+rowNum).val();
-            var e_day=$("#"+endDate+"_"+rowNum).val();
-            var e_time=$("#"+endTime+"_"+rowNum).val();
-            var s_day_r = s_day.split("-").length;
-            var e_day_r = e_day.split("-").length;
-            var s_time_r = s_time.split(":").length;
-            var e_time_r = e_time.split(":").length;
-
-            if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
-                var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
-                if(res!=undefined){
-                    $("#"+"field12744"+"_"+rowNum).val("CNY");
-                    $("#"+"field12744"+"_"+rowNum+"span > span >a").html("CNY");
-                    $("#field12559_"+rowNum+"span").html(res);
-                }
             }
         });
 
@@ -311,11 +148,7 @@ $(document).ready(function(){
             var rowNum = $(detileTabId).val().charAt($(detileTabId).val().length-1);
             var num=$("#submitdtlid0").val();
             num = num.split(",")
-            /* $("#"+invoice_type_field + "_" + rowNum+",#" + sbbzje_field + "_" + rowNum).bindPropertyChange(function () {
-
-             });*/
             $("#"+daysField + "_" + rowNum+",#"+invoice_type_field + "_" + rowNum+",#" + sbbzje_field + "_" + rowNum+",#" +field_name1 + "_" + rowNum).bindPropertyChange(function (e) {
-
                 var dayVal = $("#"+daysField+"_"+rowNum).val();
                 if(Number(dayVal)<0){
                     var index=Number(rowNum)+1
@@ -337,11 +170,6 @@ $(document).ready(function(){
                     canBt(endTime,num,rowNum);
                     canBt(startTime,num,rowNum);
                 }
-
-                var coinVal = $("#" +field_name1 + "_" + rowNum).val();
-
-                //setCoin(num,rowNum,coinVal)
-                setCanBu(num)
             });
             oldDtIdLength = dtIdLength;
         }
@@ -349,7 +177,6 @@ $(document).ready(function(){
             oldDtIdLength = dtIdLength;
         }
     });
-
 
     checkCustomize = function (){//
         var num = $("#submitdtlid0").val();
@@ -480,9 +307,7 @@ $(document).click(function () {
     var num = $("#submitdtlid0").val();
     num = num.split(",")
     for (var i = 0; i < num.length; i++) {
-        //var type = $("#" + invoice_type_field + "_" + num[i]).val();
         jdZhFun(num,i);
-        setCanBu(num)
     }
 })
 

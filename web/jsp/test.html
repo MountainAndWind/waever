@@ -13,31 +13,62 @@
 <body>
 <table cellspacing="1" class="qr">
     <div id="a" contenteditable="true" width="20" height="20">dadasdas</div>
+    <input id="s" type="text" readonly="readonly"  UNSELECTABLE="on">
 </table>
 <script src="jquery.js"></script>
-<script>
-/*
-    $("#a").click(function () {
-        console.log("dasda")
-        $.ajax({
-            url: "101.230.249.213:8081/ecs-console/api/sso/login?appMenu=openConsole%7Cconsole%7C%2F%23%2Fexpenseclaim%3FbillDefineId%3Dce856f31e99911e9997f5703dc37696d%26billMainId%3D96f669ba36a011ea8fed732411aeace6%26taskId%3Db501748e36a011ea8f2765c7c1f89be2%26billDefineHistoryId%3D2c6dce6835e811eaa352a746e7615f1c%26scene%3DOPERATOR_VIEW&cId=FWtest01&clientType=APP&language=zh_CN&loginName=WX0000120&type=referer",
-            type: 'get',
-            dataType : "jsonp",//数据类型为jsonp
-            jsonp : "jsonpCallback",//服务端用于接收callback调用的function名的参数
-            success: function(data) {
-            }
-        })})
-*/
+<script src="aaTest.js"></script>
 
-    $("#a").change(function () {
-        var describe = $("#a").html();
-        console.log("describe::"+describe)
-        $.post("/user/describeUpdate",{des:describe},function (data) {
-            if(data.status==false){
-                alert(data.msg);
-            }
+<script>
+
+    var aa=12;
+    $(document).click(function () {
+        var arr = new Array();
+        $("#oTable1 tr[_target='datarow']").each(function(){
+            arr.push($(this).attr("name"));
+        });
+
         })
-    })
+
+
+    function numDiv(num1, num2) {
+        var baseNum1 = 0, baseNum2 = 0;
+        var baseNum3, baseNum4;
+        try {
+            baseNum1 = num1.toString().split(".")[1].length;
+        } catch (e) {
+            baseNum1 = 0;
+        }
+        try {
+            baseNum2 = num2.toString().split(".")[1].length;
+        } catch (e) {
+            baseNum2 = 0;
+        }
+        with (Math) {
+            baseNum3 = Number(num1.toString().replace(".", ""));
+            baseNum4 = Number(num2.toString().replace(".", ""));
+            return (baseNum3 / baseNum4) * pow(10, baseNum2 - baseNum1);
+        }
+    };
+
+var dic = new Array();
+var imap={}
+/*$(document).click(function () {
+  $("#s").val(12312)
+    alert("das")
+})*/
+
+
 </script>
+
+<!--<script>
+    //定时器 异步运行
+    function hello(){
+        console.log("hello");
+    }
+    //使用方法名字执行方法
+    var t1 = window.setTimeout(hello,1000);
+    var t2 = window.setTimeout("hello()",3000);//使用字符串执行方法
+    window.clearTimeout(t1);//去掉定时器
+</script>-->
 </body>
 </html>

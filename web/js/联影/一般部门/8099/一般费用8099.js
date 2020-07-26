@@ -5,11 +5,12 @@ var ybxje_field="field13195";//人民币金额
 var sbbzje_field="field13192";//申报币种金额
 var sbje_field="field13212"//实报金额
 var invoice_type_field="field13245";//费用类型field1231
-var jdKeyFiekds="field12726,field12727,field12728,field12729,field12730,field12731,field12732,field12733"//九段字段名称
+var jdKeyFiekds="field13215,field13216,field13217,field13218,field13219,field13220,field13221,field13222"//九段字段名称
 var zhzh="field13198"//账号组合字段
 var zhmc="field13199"//账号名称字段
 var taxJe="field13240"//不含税金额字段
 var taxLimit="field13193"//税额
+
 
 var field_name1="field13231"//根据字段名  币种字段
 var field_name2="field13191"//设置值字段  汇率字段
@@ -26,7 +27,8 @@ var date;
 
 /***************/
 
-
+var fyrq="field13190"; //费用日期
+var zxbz="field13200"; //执行标准
 function isNull(val) {
     if(""==val||val==null||val==undefined){
         return true;
@@ -70,7 +72,7 @@ $(document).ready(function(){
             var coinVal = $("#" +field_name1 + "_" + index).val();
 
         });
-        $("#"+sbje_field+"_"+rowNum).attr("readonly","readonly");
+        //$("#"+sbje_field+"_"+rowNum).attr("readonly","readonly");
     }
 
     var dtIdLength = 0;
@@ -79,13 +81,12 @@ $(document).ready(function(){
     var detileTabId = "#submitdtlid0";
     $(detileTabId).bindPropertyChange(function () {
         dtIdLength = jQuery(detileTabId).val().split(",").length;
-        if (oldDtIdLength < dtIdLength){
-            var rowNum = $(detileTabId).val().charAt($(detileTabId).val().length-1);
+        if (oldDtIdLength <= dtIdLength){
             var num=$("#submitdtlid0").val();
             num = num.split(",")
+            var rowNum = num[num.length-1];
             $("#"+invoice_type_field + "_" + rowNum+",#" + field_name1 + "_" + rowNum).bindPropertyChange(function () {
                 var coinVal = $("#" +field_name1 + "_" + rowNum).val();
-
                 setCanBu(num)
             });
             oldDtIdLength = dtIdLength;
@@ -104,6 +105,13 @@ $(document).ready(function(){
             var type = $("#"+invoice_type_field+ "_" +num[i]).val();
             var limitJe= $("#"+bz_field+"_"+num[i]).val();
             var field_name2_val = $("#" +field_name2 + "_" + num[i]).val();
+            var fyrqVal = $("#" +fyrq + "_" + num[i]).val();
+
+            if(isNull(fyrqVal)){
+                top.Dialog.alert("明细第" + index + "行无法提交，费用日期为空！！！")
+                return false;
+            }
+
             if(isNull(field_name2_val)||0==field_name2_val){
                 top.Dialog.alert("明细第" + index + "行无法提交，汇率不得为空！！！")
                 return false;
@@ -120,7 +128,7 @@ $(document).ready(function(){
 
                     /****************************/
                     date1=date.split("-");
-                    var  n= $("#field12493_"+num[i]).val();
+                    var  n= $("#"+fyrq+"_"+num[i]).val();
                     n=n.split("-");
                     var e_time=new Date(date1[0],date1[1]-1,date1[2],0,0,0,0);
 
@@ -129,6 +137,12 @@ $(document).ready(function(){
                     if(e_time.getTime()<now.getTime()){
                         top.Dialog.alert("手机话费额度已经过期");
                         return false;
+                    }else{
+                        if(Number($("#"+bz_field+"_"+num[i]).val())<Number($("#"+sbje_field+"_"+num[i]).val()*0.8)){
+                            // top.Dialog.alert("手机话费额度不足!!");
+                            // return false;
+
+                        }
                     }
 
                     /******************************/
@@ -185,34 +199,6 @@ $(document).click(function () {
 })
 
 
-/**
- * 话费赋值
- * @param num
- * @param i
- *
- * @param type
- */
-function dianHuaValidation(num,i,type) {
-    if(""!=type){
-        if(phoneInvoceIDs.indexOf(type)!=-1){
-            //电话类型
-            var rmb = Number($("#"+sbbzje_field+"_"+num[i]).val())*Number($("#"+field_name2+"_"+num[i]).val())//×汇率所得值
-
-            $("#"+ybxje_field+"_"+num[i]).val(rmb);
-            var jePer=Number(rmb)*0.8;
-
-            var bzval = $("#"+bz_field+"_"+num[i]).val();
-            if(Number(jePer)<=Number(bzval)){
-                $("#"+sbje_field+"_"+num[i]).val(jePer);
-            }else{
-                $("#"+sbje_field+"_"+num[i]).val(bzval);
-            }
-        }else{
-            var sbVal = $("#"+ybxje_field+"_"+num[i]).val()
-            $("#"+sbje_field+"_"+num[i]).val(sbVal)
-        }
-    }
-}
 
 /**
  * 九段key val 赋值
@@ -279,12 +265,6 @@ regBorwserEvent();
 
 
 </script>
-
-
-
-
-
-
 
 
 

@@ -1,4 +1,3 @@
-
 <script>
 /**
  * 处理额度判断时当国家时中国执行标准汇率使用CNY汇率
@@ -63,27 +62,25 @@ var textValue="<img align=absmiddle src='/images/BacoError_wev8.gif' />";
 /*餐补-------------------------------------------------------*/
 /**
  * 设置餐补
- * @param type
- * @param s_day
- * @param s_time
- * @param e_day
- * @param e_time
- * @param array1
- * @returns {number}
+ * @param rowNum
  */
 function f_getFee(rowNum) {
-    var  type=$("#"+invoice_type_field+"_"+rowNum).val();
+    //console.log("f_getFee")
+    var type=$("#"+invoice_type_field+"_"+rowNum).val();
     var s_day=$("#"+startDate+"_"+rowNum).val();
     var s_time= $("#"+startTime+"_"+rowNum).val();
     var e_day=$("#"+endDate+"_"+rowNum).val();
     var e_time=$("#"+endTime+"_"+rowNum).val();
+
+
     var s_day_r = s_day.split("-").length;
     var e_day_r = e_day.split("-").length;
     var s_time_r = s_time.split(":").length;
     var e_time_r = e_time.split(":").length;
 
+
+    var res;
     if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
-        var res;
         var rArray = array1.split(";");
         var search = rArray.indexOf(type);
         if (search < rArray.length - 1 && search >= 0) {
@@ -99,13 +96,13 @@ function f_getFee(rowNum) {
             if (start_d.getTime() == end_d.getTime()) {
                 var dif = end_t.getTime() - start_t.getTime();
                 if (dif >= 12 * 60 * 60 * 1000) {
-                    return 100;
+                    res= 100;
                 } else if (dif >= 10 * 60 * 60 * 1000) {
-                    return 70;
+                    res=  70;
                 } else if (dif >= 4 * 60 * 60 * 1000) {
-                    return 35;
+                    res=  35;
                 } else {
-                    return 0;
+                    res=  0;
                 }
             } else {
                 var middle = (end_d.getTime() - start_d.getTime()) / (24 * 60 * 60 * 1000) - 1;
@@ -125,14 +122,18 @@ function f_getFee(rowNum) {
                 res= 100 * middle + start + end;
             }
         }
-        if(res!=undefined){
+        //console.log("res::"+res)
+        if(!isNull(res)){
             $("#"+bz_field+"_"+rowNum+"span").html(res);
             $("#"+bz_field+"_"+rowNum).val(res);
         }
     }
 }
 
+
+
 /*餐补-------------------------------------------------------*/
+
 
 
 
@@ -173,7 +174,7 @@ $(document).ready(function(){
             var typeVal = $("#"+invoice_type_field+"_"+index).val();
             var flag = isNull(typeVal);
             if(!flag){
-                if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
+                if(isExist(canBuIDs,typeVal)){
                     f_getFee(index)
                 }else{
                     getBz(num,index);
@@ -185,7 +186,7 @@ $(document).ready(function(){
             var typeVal = $("#"+invoice_type_field+ "_" + index).val();
             var flag = isNull(typeVal);
             if(!flag){
-                if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
+                if(isExist(canBuIDs,typeVal)){
                     setBt(endTime,num,index);
                     setBt(startTime,num,index);
                     f_getFee(index)
@@ -238,7 +239,7 @@ $(document).ready(function(){
                 var typeVal = $("#"+invoice_type_field+"_"+rowNum).val();
                 var flag = isNull(typeVal);
                 if(!flag){
-                    if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
+                    if(isExist(canBuIDs,typeVal)){
                         f_getFee(rowNum)
                     }else{
                         getBz(num,rowNum);
@@ -255,7 +256,7 @@ $(document).ready(function(){
                 var typeVal = $("#"+invoice_type_field+"_"+rowNum).val();
                 var flag = isNull(typeVal);
                 if(!flag){
-                    if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
+                    if(isExist(canBuIDs,typeVal)){
                         setBt(endTime,num,rowNum);
                         setBt(startTime,num,rowNum);
                         f_getFee(rowNum)
@@ -326,7 +327,7 @@ $(document).ready(function(){
             var countryVal = $("#"+country+"_"+num[i]).val();
             var factRmb = factjeVal;
 
-            if(canBuIDs.indexOf(invoiceVal)!=-1){//dayAllowanceIDs
+            if(isExist(canBuIDs,invoiceVal)){
                 if(isNull(startTimeVal)){
                     top.Dialog.alert("明细第"+index+"行无法提交, 开始时间不得为空！！！")
                     return false;
@@ -335,7 +336,7 @@ $(document).ready(function(){
                     top.Dialog.alert("明细第"+index+"行无法提交, 结束时间不得为空！！！")
                     return false;
                 }
-            }
+             }
 
             if(isNull(startTimeVal)){
                 startTimeVal="00:00"
@@ -364,7 +365,8 @@ $(document).ready(function(){
                 return false;
             }
             if(""!=invoiceVal){
-                if((dayAllowInvoceMainIds+"-"+accoomInvoceIDs+"-"+internationalTansInvoceIDs+"-"+internationalAccomInvoceIDs+"-"+serveIDs+"-"+indoorTransEdIDs).indexOf(invoiceVal)!=-1){
+                //(dayAllowInvoceMainIds+"-"+accoomInvoceIDs+"-"+internationalTansInvoceIDs+"-"+internationalAccomInvoceIDs+"-"+serveIDs+"-"+indoorTransEdIDs).indexOf(invoiceVal)!=-1
+                if(isExist(dayAllowInvoceMainIds,invoiceVal)||isExist(accoomInvoceIDs,invoiceVal)||isExist(internationalTansInvoceIDs,invoiceVal)||isExist(internationalAccomInvoceIDs,invoiceVal)||isExist(serveIDs,invoiceVal)||isExist(indoorTransEdIDs,invoiceVal)){
                     if (chinaId==countryVal) {//人名币处理
                         var limitRmb = Number(limitJeVal)
                         console.log("limitRmb：："+limitRmb)
@@ -382,7 +384,7 @@ $(document).ready(function(){
                         }
                     }
                 }
-                if(canBuIDs.indexOf(invoiceVal)!=-1){
+                if(isExist(canBuIDs,invoiceVal)){
                     var limitRmb = Number(limitJeVal)
                     console.log("limitRmb：："+limitRmb)
                     if (Number(factRmb) > Number(limitRmb)) {
@@ -697,6 +699,24 @@ function findValidationId(val) {///base/findInvoiceTypById.jsp?fieldVal=3
     });
 }
 
+/**
+ * 判断所属类型
+ * @param str
+ */
+function isExist(str,val) {
+    if(!isNull(str)){
+        var arr = str.split(",")
+        for (var i = 0; i < arr.length; i++) {
+            if(arr[i]==val){
+                return true;
+            }
+        }
+        return false;
+    }else{
+       return false;
+    }
+}
+
 
 //为防止明细行添加过快，添加以下参数
 var addBtnName = 'addbutton0'; //添加明细行的按钮ID -- addbutton(0,1,2...)
@@ -722,9 +742,7 @@ var regBorwserEvent = function() {
     };
 };
 regBorwserEvent();
-
 /*餐补*/
-
 </script>
 
 

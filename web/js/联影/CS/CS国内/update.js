@@ -49,16 +49,9 @@ var array1;
  */
 var textValue="<img align=absmiddle src='/images/BacoError_wev8.gif' />";
 
-/*餐补-------------------------------------------------------*/
 /**
  * 设置餐补
- * @param type
- * @param s_day
- * @param s_time
- * @param e_day
- * @param e_time
- * @param array1
- * @returns {number}
+ * @param rowNum
  */
 function f_getFee(rowNum) {
     //console.log("f_getFee")
@@ -104,13 +97,13 @@ function f_getFee(rowNum) {
             if (start_d.getTime() == end_d.getTime()) {
                 var dif = end_t.getTime() - start_t.getTime();
                 if (dif >= 12 * 60 * 60 * 1000) {
-                    return 100;
+                    res= 100;
                 } else if (dif >= 10 * 60 * 60 * 1000) {
-                    return 70;
+                    res=  70;
                 } else if (dif >= 4 * 60 * 60 * 1000) {
-                    return 35;
+                    res=  35;
                 } else {
-                    return 0;
+                    res=  0;
                 }
             } else {
                 var middle = (end_d.getTime() - start_d.getTime()) / (24 * 60 * 60 * 1000) - 1;
@@ -130,16 +123,13 @@ function f_getFee(rowNum) {
                 res= 100 * middle + start + end;
             }
         }
-        //console.log("res::"+res)
+        console.log("res::"+res)
         if(!isNull(res)){
             $("#"+bz_field+"_"+rowNum+"span").html(res);
             $("#"+bz_field+"_"+rowNum).val(res);
         }
     }
 }
-
-
-/*餐补-------------------------------------------------------*/
 
 //为防止明细行添加过快，添加以下参数
 var addBtnName = 'addbutton0'; //添加明细行的按钮ID -- addbutton(0,1,2...)
@@ -205,7 +195,7 @@ function isNull(val) {
 }
 
 
-$(document).ready(function(){
+$(document).ready(function() {
 
     findValidationId(accoomInvoceMainId)
     findValidationId(indoorTransMainId)
@@ -218,53 +208,53 @@ $(document).ready(function(){
     num = num.split(",")
 
     $.get("/work/canbu.jsp",
-        function(data, status) {
-            array1= data;
+        function (data, status) {
+            array1 = data;
         });
 
-    if(array1==undefined){
+    if (array1 == undefined) {
         $.get("/work/canbu.jsp",
-            function(data, status) {
-                array1= data;
+            function (data, status) {
+                array1 = data;
             });
     }
     for (var i = 0; i < num.length; i++) {
         var rowNum = num[i];
-        $("#"+ invoice_type_field + "_" + rowNum).bindPropertyChange(function (e) {
+        $("#" + invoice_type_field + "_" + rowNum).bindPropertyChange(function (e) {
             var index = e.id.split("_")[1]
-            var typeVal = $("#"+invoice_type_field+ "_" + index).val();
+            var typeVal = $("#" + invoice_type_field + "_" + index).val();
             var flag = isNull(typeVal);
-            if(!flag){
-                if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
-                    setBt(endTime,num,index);
-                    setBt(startTime,num,index);
+            if (!flag) {
+                if (isExist(canBuIDs, typeVal)) {//dayAllowanceIDs
+                    setBt(endTime, num, index);
+                    setBt(startTime, num, index);
                     f_getFee(index)
-                }else{
-                    canBt(endTime,num,index);
-                    canBt(startTime,num,index);
-                    getBz(num,index);
+                } else {
+                    canBt(endTime, num, index);
+                    canBt(startTime, num, index);
+                    getBz(num, index);
                 }
-            }else{
-                canBt(endTime,num,index);
-                canBt(startTime,num,index);
+            } else {
+                canBt(endTime, num, index);
+                canBt(startTime, num, index);
             }
         });
         // //国内触发点 ：城市   费用类型   费用类型对照id  sqr  天数  fylxMainId  sqrField
-        $("#"+daysField + "_" + rowNum+",#"+city + "_" + rowNum+",#"+fylxMainId + "_" + rowNum+",#"+fylxMainId + "_" + rowNum).bindPropertyChange(function (e) {
+        $("#" + daysField + "_" + rowNum + ",#" + city + "_" + rowNum + ",#" + fylxMainId + "_" + rowNum + ",#" + fylxMainId + "_" + rowNum).bindPropertyChange(function (e) {
             var index = e.id.split("_")[1]
             setDay(index)
-            var dayVal = $("#"+daysField+"_"+index).val();
-            if(Number(dayVal)<0){
-                var index=Number(index)+1
-                top.Dialog.alert("明细第"+index+"行天数不能为负数请修改！！！")
+            var dayVal = $("#" + daysField + "_" + index).val();
+            if (Number(dayVal) < 0) {
+                var index = Number(index) + 1
+                top.Dialog.alert("明细第" + index + "行天数不能为负数请修改！！！")
             }
-            var typeVal = $("#"+invoice_type_field+"_"+index).val();
+            var typeVal = $("#" + invoice_type_field + "_" + index).val();
             var flag = isNull(typeVal);
-            if(!flag){
-                if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
+            if (!flag) {
+                if (isExist(canBuIDs, typeVal)) {//dayAllowanceIDs
                     f_getFee(index)
-                }else{
-                    getBz(num,index);
+                } else {
+                    getBz(num, index);
                 }
             }
         });
@@ -272,7 +262,7 @@ $(document).ready(function(){
         /**
          * 天数计算触发操作
          */
-        $("#" +startDate + "_" + rowNum+",#" +endDate + "_" + rowNum).bindPropertyChange(function (e) {
+        $("#" + startDate + "_" + rowNum + ",#" + endDate + "_" + rowNum).bindPropertyChange(function (e) {
             var index = e.id.split("_")[1]
             setDay(index);
         });
@@ -281,13 +271,13 @@ $(document).ready(function(){
         /**
          * 时间触发餐补费用
          */
-        $("#" +startTime + "_" + rowNum+",#" +endTime + "_" + rowNum).bindPropertyChange(function (e) {
+        $("#" + startTime + "_" + rowNum + ",#" + endTime + "_" + rowNum).bindPropertyChange(function (e) {
             var index = e.id.split("_")[1]
             f_getFee(index)
         });
 
 
-        jdZhFun(num,i);
+        jdZhFun(num, i);
     }
 
     var dtIdLength = 0;
@@ -298,129 +288,151 @@ $(document).ready(function(){
     var detileTabId = "#submitdtlid0";
     $(detileTabId).bindPropertyChange(function () {
         dtIdLength = jQuery(detileTabId).val().split(",").length;
-        if (oldDtIdLength <= dtIdLength){
-            var num=$("#submitdtlid0").val();
+        if (oldDtIdLength <= dtIdLength) {
+            var num = $("#submitdtlid0").val();
             num = num.split(",")
-            var rowNum = num[num.length-1];
+            var rowNum = num[num.length - 1];
             // //国内触发点 ：城市   费用类型   费用类型对照id  sqr  天数  fylxMainId  sqrField
-            $("#"+daysField + "_" + rowNum+",#"+city + "_" + rowNum+",#"+fylxMainId + "_" + rowNum+",#"+fylxMainId + "_" + rowNum).bindPropertyChange(function (e) {
+            $("#" + daysField + "_" + rowNum + ",#" + city + "_" + rowNum + ",#" + fylxMainId + "_" + rowNum + ",#" + fylxMainId + "_" + rowNum).bindPropertyChange(function (e) {
                 setDay(rowNum)
-                var dayVal = $("#"+daysField+"_"+rowNum).val();
-                if(Number(dayVal)<0){
-                    var index=Number(rowNum)+1
-                    top.Dialog.alert("明细第"+index+"行天数不能为负数请修改！！！")
+                var dayVal = $("#" + daysField + "_" + rowNum).val();
+                if (Number(dayVal) < 0) {
+                    var index = Number(rowNum) + 1
+                    top.Dialog.alert("明细第" + index + "行天数不能为负数请修改！！！")
                 }
-                var typeVal = $("#"+invoice_type_field+"_"+rowNum).val();
+                var typeVal = $("#" + invoice_type_field + "_" + rowNum).val();
                 var flag = isNull(typeVal);
-                if(!flag){
-                    if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
+                if (!flag) {
+                    if (isExist(canBuIDs, typeVal)) {//dayAllowanceIDs
                         f_getFee(rowNum)
-                    }else{
-                        getBz(num,rowNum);
+                    } else {
+                        getBz(num, rowNum);
                     }
                 }
             });
 
             $("#" + invoice_type_field + "_" + rowNum).bindPropertyChange(function (e) {
-                var typeVal = $("#"+invoice_type_field+"_"+rowNum).val();
+                var typeVal = $("#" + invoice_type_field + "_" + rowNum).val();
                 var flag = isNull(typeVal);
-                if(!flag){
-                    if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
-                        setBt(endTime,num,rowNum);
-                        setBt(startTime,num,rowNum);
+                if (!flag) {
+                    if (isExist(canBuIDs, typeVal)) {//dayAllowanceIDs
+                        setBt(endTime, num, rowNum);
+                        setBt(startTime, num, rowNum);
                         f_getFee(rowNum)
-                    }else{
-                        canBt(endTime,num,rowNum);
-                        canBt(startTime,num,rowNum);
-                        getBz(num,rowNum);
+                    } else {
+                        canBt(endTime, num, rowNum);
+                        canBt(startTime, num, rowNum);
+                        getBz(num, rowNum);
                     }
-                }else{
-                    canBt(endTime,num,rowNum);
-                    canBt(startTime,num,rowNum);
+                } else {
+                    canBt(endTime, num, rowNum);
+                    canBt(startTime, num, rowNum);
                 }
             });
 
             /**
              * 日期计算触发操作
              */
-            $("#" +startDate + "_" + rowNum+",#" +endDate + "_" + rowNum).bindPropertyChange(function (e) {
+            $("#" + startDate + "_" + rowNum + ",#" + endDate + "_" + rowNum).bindPropertyChange(function (e) {
                 setDay(rowNum);
             });
 
             /**
              * 时间触发餐补费用
              */
-            $("#" +startTime + "_" + rowNum+",#" +endTime + "_" + rowNum).bindPropertyChange(function (e) {
+            $("#" + startTime + "_" + rowNum + ",#" + endTime + "_" + rowNum).bindPropertyChange(function (e) {
                 f_getFee(rowNum)
             });
 
 
             oldDtIdLength = dtIdLength;
         }
-        if(oldDtIdLength > dtIdLength){
+        if (oldDtIdLength > dtIdLength) {
             oldDtIdLength = dtIdLength;
         }
     });
 
-    checkCustomize = function (){
+    checkCustomize = function () {
         var num = $("#submitdtlid0").val();
         num = num.split(",");
         for (var i = 0; i < num.length; i++) {
-            var index=Number(i)+1;
-            var endDateVal = $("#"+endDate+"_"+num[i]).val();
-            var endTimeVal = $("#"+endTime+"_"+num[i]).val();
-            var startDateVal = $("#"+startDate+"_"+num[i]).val();
-            var startTimeVal = $("#"+startTime+"_"+num[i]).val();
-            var factjeVal = $("#"+sbje_field+"_"+num[i]).val();
-            var limitJeVal = $("#"+bz_field+"_"+num[i]).val();
-            var invoiceVal = $("#"+invoice_type_field+"_"+num[i]).val();
+            var index = Number(i) + 1;
+            var endDateVal = $("#" + endDate + "_" + num[i]).val();
+            var endTimeVal = $("#" + endTime + "_" + num[i]).val();
+            var startDateVal = $("#" + startDate + "_" + num[i]).val();
+            var startTimeVal = $("#" + startTime + "_" + num[i]).val();
+            var factjeVal = $("#" + sbje_field + "_" + num[i]).val();
+            var limitJeVal = $("#" + bz_field + "_" + num[i]).val();
+            var invoiceVal = $("#" + invoice_type_field + "_" + num[i]).val();
             var nowDate = getNowDate();
-            var days = getDays(endDateVal,nowDate)
-            if(canBuIDs.indexOf(invoiceVal)!=-1){
+            var days = getDays(endDateVal, nowDate)
+            if(isExist(canBuIDs,invoiceVal)){
                 if(isNull(startTimeVal)){
-                    top.Dialog.alert("明细第"+index+"行无法提交，开始时间不得为空！！！")
+                    top.Dialog.alert("明细第"+index+"行无法提交, 开始时间不得为空！！！")
                     return false;
                 }
                 if(isNull(endTimeVal)){
-                    top.Dialog.alert("明细第"+index+"行无法提交，结束时间不得为空！！！")
+                    top.Dialog.alert("明细第"+index+"行无法提交, 结束时间不得为空！！！")
                     return false;
                 }
             }
-            if(isNull(startTimeVal)){
-                startTimeVal="00:00"
+            if (isNull(startTimeVal)) {
+                startTimeVal = "00:00"
             }
-            if(isNull(endTimeVal)){
-                endTimeVal="00:00"
+            if (isNull(endTimeVal)) {
+                endTimeVal = "00:00"
             }
-            var start = startDateVal+" "+startTimeVal+":00"
-            var end = endDateVal+" "+endTimeVal+":00"
-            if(!compareTime(start,end)){
-                top.Dialog.alert("明细第"+index+"行无法提交, 开始时间要早于结束时间！！！")
+            var start = startDateVal + " " + startTimeVal + ":00"
+            var end = endDateVal + " " + endTimeVal + ":00"
+            if (!compareTime(start, end)) {
+                top.Dialog.alert("明细第" + index + "行无法提交, 开始时间要早于结束时间！！！")
                 return false;
             }
-            if(Number(days)>60){
-                top.Dialog.alert("明细第"+index+"行无法提交，费用发生日期已超过60天！！！")
+            if (Number(days) > 60) {
+                top.Dialog.alert("明细第" + index + "行无法提交，费用发生日期已超过60天！！！")
                 return false;
             }
-            if(invoiceVal!=""){
-                console.log("accoomInvoceIDs::"+accoomInvoceIDs)
-                console.log("serveIDs::"+serveIDs)
-                console.log("indoorTransEdIDs::"+indoorTransEdIDs)
-                console.log("canBuIDs::"+canBuIDs)
-                if((accoomInvoceIDs+"-"+serveIDs+"-"+indoorTransEdIDs+"-"+indoorTransIDs+"-"+canBuIDs).indexOf(invoiceVal)!=-1) {
-                    console.log("实报金额：："+factjeVal)
-                    console.log("执行标准：："+limitJeVal)
-                    if(Number(factjeVal)>Number(limitJeVal)){
-                        top.Dialog.alert("明细第"+index+"行无法提交，报销额度超过执行标准！！！")
+            if (invoiceVal != "") {
+                console.log("accoomInvoceIDs::" + accoomInvoceIDs)
+                console.log("serveIDs::" + serveIDs)
+                console.log("indoorTransEdIDs::" + indoorTransEdIDs)
+                console.log("canBuIDs::" + canBuIDs)
+                console.log("indoorTransIDs::" + indoorTransIDs)
+                //if((accoomInvoceIDs+"-"+serveIDs+"-"+indoorTransEdIDs+"-"+indoorTransIDs+"-"+canBuIDs).indexOf(invoiceVal)!=-1) {
+                if (isExist(accoomInvoceIDs, invoiceVal) || isExist(serveIDs, invoiceVal) || isExist(indoorTransEdIDs, invoiceVal) || isExist(indoorTransIDs, invoiceVal) || isExist(canBuIDs, invoiceVal)) {
+                    console.log("实报金额：：" + factjeVal)
+                    console.log("执行标准：：" + limitJeVal)
+                    if (Number(factjeVal) > Number(limitJeVal)) {
+                        top.Dialog.alert("明细第" + index + "行无法提交，报销额度超过执行标准！！！")
                         return false;
                     }
                 }
             }
-            jdZhFun(num,i);
+            jdZhFun(num, i);
         }
         return true;
-    }
+   }
 })
+
+
+
+/**
+ * 判断所属类型
+ * @param str
+ */
+function isExist(str,val) {
+    if(!isNull(str)){
+        var arr = str.split(",")
+        for (var i = 0; i < arr.length; i++) {
+            if(arr[i]==val){
+                return true;
+            }
+        }
+        return false;
+    }else{
+        return false;
+    }
+}
 
 /**
  * 获取执行标准

@@ -14,8 +14,9 @@ var startDate="field13224"//开始日期
 var startTime="field13225"//开始时间
 var endTime="field13227"//结束时间
 
+
 var invoice_type_field="field13245";//费用类型field1231
-var jdKeyFiekds="field12726,field12727,field12728,field12729,field12730,field12731,field12732,field12733"//九段字段名称
+var jdKeyFiekds="field13215,field13216,field13217,field13218,field13219,field13220,field13221,field13222"//九段字段名称
 var zhzh="field13198"//账号组合字段
 var zhmc="field13199"//账号名称字段
 var field_name1="field13231"//根据字段名  币种字段
@@ -26,10 +27,10 @@ var taxJe="field13240"//不含税金额字段
 var taxLimit="field13193"//税额
 var ybxje_field="field13195";//人民币金额
 
-
+var fyrq="field13190"; //费用日期
 var dollarsRate="field13261"//美元汇率
-var country="field13236"//国家
-var chinaId="96";
+var country="field13334"//国家
+var chinaId="216";
 
 
 var internationalTansInvoceMainId="12"//费用类型对照表中交通主键id
@@ -111,9 +112,10 @@ function setShiBao(num,i,array1 ) {
     if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
         var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
         if(res!=undefined){
-            $("#"+"field12744"+"_"+num[i]).val("CNY");
-            $("#"+"field12744"+"_"+num[i]+"span > span >a").html("CNY");
-            $("#field12559_"+num[i]+"span").html(res);
+            $("#"+field_name1+"_"+num[i]).val("CNY");
+            $("#"+field_name1+"_"+num[i]+"span > span >a").html("CNY");
+            $("#"+bz_field+"_"+num[i]+"span").html(res);
+            $("#"+bz_field+"_"+num[i]).val(res);
         }
     }
 
@@ -148,13 +150,11 @@ function setBt(col,num,index) {
     var btzd = $("input[name='needcheck']").val();
     $("#"+col+"_"+num[index]+"span").html(textValue);
     $("#"+col+"_"+num[index]).attr('viewtype','1');
-    var fieldIds = btzd + "," + col+"_"+num[index] ;
-    $("input[name='needcheck']").val(fieldIds);
-    /*if(JudgeBroswer()){//ie
-        document.getElementById(col+"_"+num[index]+"browser").removeAttribute("disabled")
-    }else{
-        $("#"+col+"_"+num[index]+"browser").removeAttr("disabled");
-    }*/
+    var s="," + col+"_"+num[index];
+    if(btzd.indexOf(s)==-1){
+        var fieldIds = btzd + "," + col+"_"+num[index] ;
+        $("input[name='needcheck']").val(fieldIds);
+    }
     document.getElementById(col+"_"+num[index]+"browser").removeAttribute("disabled")
 }
 
@@ -162,10 +162,8 @@ function setBt(col,num,index) {
  * 取消必填
  */
 function canBt(col,num,index) {
-    /*console.log("canBt")
-    console.log("col::"+col)
-    console.log("num::"+num)
-    console.log("index::"+index)*/
+    console.log("canBt")
+
     var btzd = $("input[name='needcheck']").val();
     btzd=btzd.replace(","+col+"_"+num[index],"")
     $("input[name='needcheck']").val(btzd);
@@ -184,28 +182,8 @@ function isNull(val) {
 }
 
 
-/**
- * 判断浏览器类型
- * ie返回true
- * @constructor
- */
-function JudgeBroswer() {
-    alert("JudgeBroswer")
-    var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
-    var isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1; //判断是否IE<11浏览器
-    var isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf("rv:11.0") > -1;
-    if(isIE ) {
-        var reIE = new RegExp("MSIE (\\d+\\.\\d+);");
-        reIE.test(userAgent);
-        var fIEVersion = parseFloat(RegExp["$1"]);
-        alert("fIEVersion"+fIEVersion)
-        return true;
-    } else if(isIE11){
-        return true;
-    }else{
-        return false;
-    }
-}
+
+
 
 $(document).ready(function(){
     findValidationId(internationalTansInvoceMainId)
@@ -217,7 +195,7 @@ $(document).ready(function(){
     num = num.split(",")
     for (var i = 0; i < num.length; i++) {
         var rowNum = num[i];
-        $("#"+daysField + "_" + rowNum+",#"+invoice_type_field + "_" + rowNum+",#" + sbbzje_field + "_" + rowNum+",#" +field_name1 + "_" + rowNum).bindPropertyChange(function (e) {
+        $("#"+daysField + "_" + rowNum+",#" + sbbzje_field + "_" + rowNum+",#" +field_name1 + "_" + rowNum).bindPropertyChange(function (e) {
 
             var index = e.id.split("_")[1]
             var dayVal = $("#"+daysField+"_"+index).val();
@@ -225,34 +203,6 @@ $(document).ready(function(){
                 var index=Number(index)+1
                 top.Dialog.alert("明细第"+index+"行天数不能为负数请修改！！！")
             }
-
-            var index = e.id.split("_")[1]
-
-            var typeVal = $("#"+invoice_type_field+ "_" + index).val();
-
-            /*if(typeVal!=""||typeVal!=null||typeVal!=undefined){
-
-            }*/
-
-            var flag = isNull(typeVal);
-            alert("flag::"+flag);
-            if(!flag){
-                if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
-                    setBt(endTime,num,index);
-                    setBt(startTime,num,index);
-                }else{
-                    canBt(endTime,num,index);
-                    canBt(startTime,num,index);
-                }
-            }else{
-                canBt(endTime,num,index);
-                canBt(startTime,num,index);
-            }
-
-            var coinVal = $("#" +field_name1 + "_" + index).val();
-
-            //setCoin(num,rowNum,coinVal)
-
 
             var  type=$("#"+invoice_type_field+"_"+rowNum).val();
             var s_day=$("#"+startDate+"_"+rowNum).val();
@@ -267,14 +217,74 @@ $(document).ready(function(){
             if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
                 var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
                 if(res!=undefined){
-                    $("#"+"field12744"+"_"+rowNum).val("CNY");
-                    $("#"+"field12744"+"_"+rowNum+"span > span >a").html("CNY");
-                    $("#field12559_"+rowNum+"span").html(res);
+                    $("#"+field_name1+"_"+rowNum).val("CNY");
+                    $("#"+field_name1+"_"+rowNum+"span > span >a").html("CNY");
+                    $("#"+bz_field+"_"+rowNum+"span").html(res);
+                    $("#"+bz_field+"_"+rowNum).val(res);
                 }
             }
         });
+        $("#"+invoice_type_field + "_" + rowNum).bindPropertyChange(function (e) {
+            console.log("bindPropertyChange typerea")
+            var index = e.id.split("_")[1]
+            var typeVal = $("#"+invoice_type_field+ "_" + index).val();
+            var flag = isNull(typeVal);
+            console.log("flag::"+flag);
+            if(!flag){
+                if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
+                    setBt(endTime,num,index);
+                    setBt(startTime,num,index);
+                }else{
+                    canBt(endTime,num,index);
+                    canBt(startTime,num,index);
+                }
+            }else{
+                canBt(endTime,num,index);
+                canBt(startTime,num,index);
+            }
 
+            var  type=$("#"+invoice_type_field+"_"+rowNum).val();
+            var s_day=$("#"+startDate+"_"+rowNum).val();
+            var s_time= $("#"+startTime+"_"+rowNum).val();
+            var e_day=$("#"+endDate+"_"+rowNum).val();
+            var e_time=$("#"+endTime+"_"+rowNum).val();
+            var s_day_r = s_day.split("-").length;
+            var e_day_r = e_day.split("-").length;
+            var s_time_r = s_time.split(":").length;
+            var e_time_r = e_time.split(":").length;
 
+            if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
+                var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
+                if(res!=undefined){
+                    $("#"+field_name1+"_"+rowNum).val("CNY");
+                    $("#"+field_name1+"_"+rowNum+"span > span >a").html("CNY");
+                    $("#"+bz_field+"_"+rowNum+"span").html(res);
+                    $("#"+bz_field+"_"+rowNum).val(res);
+                }
+            }
+        });
+        $("#" +endTime + "_" + rowNum).bindPropertyChange(function (e) {
+
+            var  type=$("#"+invoice_type_field+"_"+rowNum).val();
+            var s_day=$("#"+startDate+"_"+rowNum).val();
+            var s_time= $("#"+startTime+"_"+rowNum).val();
+            var e_day=$("#"+endDate+"_"+rowNum).val();
+            var e_time=$("#"+endTime+"_"+rowNum).val();
+            var s_day_r = s_day.split("-").length;
+            var e_day_r = e_day.split("-").length;
+            var s_time_r = s_time.split(":").length;
+            var e_time_r = e_time.split(":").length;
+
+            if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
+                var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
+                if(res!=undefined){
+                    $("#"+field_name1+"_"+rowNum).val("CNY");
+                    $("#"+field_name1+"_"+rowNum+"span > span >a").html("CNY");
+                    $("#"+bz_field+"_"+rowNum+"span").html(res);
+                    $("#"+bz_field+"_"+rowNum).val(res);
+                }
+            }
+        });
 
         jdZhFun(num,i);
     }
@@ -287,25 +297,30 @@ $(document).ready(function(){
      */
     var detileTabId = "#submitdtlid0";
     $(detileTabId).bindPropertyChange(function () {
+        console.log("detileTabId :: bindPropertyChange")
         dtIdLength = jQuery(detileTabId).val().split(",").length;
+        console.log("dtIdLength::"+dtIdLength)
+        console.log("oldDtIdLength::"+oldDtIdLength)
         if (oldDtIdLength < dtIdLength){
             var rowNum = $(detileTabId).val().charAt($(detileTabId).val().length-1);
             var num=$("#submitdtlid0").val();
+            console.log("rowNum::"+rowNum)
+            console.log("num::"+num)
             num = num.split(",")
-            /* $("#"+invoice_type_field + "_" + rowNum+",#" + sbbzje_field + "_" + rowNum).bindPropertyChange(function () {
-
-             });*/
-            $("#"+daysField + "_" + rowNum+",#"+invoice_type_field + "_" + rowNum+",#" + sbbzje_field + "_" + rowNum+",#" +field_name1 + "_" + rowNum).bindPropertyChange(function (e) {
+            $("#"+daysField + "_" + rowNum+",#" + sbbzje_field + "_" + rowNum+",#" +field_name1 + "_" + rowNum ).bindPropertyChange(function (e) {
 
                 var dayVal = $("#"+daysField+"_"+rowNum).val();
                 if(Number(dayVal)<0){
                     var index=Number(rowNum)+1
                     top.Dialog.alert("明细第"+index+"行天数不能为负数请修改！！！")
                 }
-
+            });
+            $("#"+invoice_type_field + "_" + rowNum).bindPropertyChange(function (e) {
+                console.log("bindPropertyChange")
                 var typeVal = $("#"+invoice_type_field+"_"+rowNum).val();
 
                 var flag = isNull(typeVal);
+                console.log("flag::"+flag);
                 if(!flag){
                     if(canBuIDs.indexOf(typeVal)!=-1){//dayAllowanceIDs
                         setBt(endTime,num,rowNum);
@@ -318,11 +333,32 @@ $(document).ready(function(){
                     canBt(endTime,num,rowNum);
                     canBt(startTime,num,rowNum);
                 }
+            });
 
-                var coinVal = $("#" +field_name1 + "_" + rowNum).val();
 
-                //setCoin(num,rowNum,coinVal)
-                setCanBu(num)
+            $("#" +endTime + "_" + rowNum).bindPropertyChange(function (e) {
+
+                var  type=$("#"+invoice_type_field+"_"+rowNum).val();
+                var s_day=$("#"+startDate+"_"+rowNum).val();
+                var s_time= $("#"+startTime+"_"+rowNum).val();
+                var e_day=$("#"+endDate+"_"+rowNum).val();
+                var e_time=$("#"+endTime+"_"+rowNum).val();
+                var s_day_r = s_day.split("-").length;
+                var e_day_r = e_day.split("-").length;
+                var s_time_r = s_time.split(":").length;
+                var e_time_r = e_time.split(":").length;
+
+                if(s_day_r >1 && e_day_r >1 && s_time_r >1  && e_time_r >1 ){
+                    var res=f_getFee(type, s_day, s_time, e_day, e_time,array1 );
+                    if(res!=undefined){
+                        $("#"+field_name1+"_"+rowNum).val("CNY");
+                        $("#"+field_name1+"_"+rowNum+"span > span >a").html("CNY");
+                        $("#"+bz_field+"_"+rowNum+"span").html(res);
+                        $("#"+bz_field+"_"+rowNum).val(res);
+                    }
+                }
+
+
             });
             oldDtIdLength = dtIdLength;
         }
@@ -331,7 +367,7 @@ $(document).ready(function(){
         }
     });
 
-
+    //拦截验证
     checkCustomize = function (){//
         var num = $("#submitdtlid0").val();
         num = num.split(",")
@@ -341,6 +377,11 @@ $(document).ready(function(){
             var invoiceVal = $("#"+invoice_type_field+"_"+num[i]).val();
             var field_name1_val = $("#" +field_name1 + "_" + num[i]).val();
             var field_name2_val = $("#" +field_name2 + "_" + num[i]).val();
+            var fyrqVal = $("#" +fyrq + "_" + num[i]).val();
+            if(isNull(fyrqVal)){
+                top.Dialog.alert("明细第" + index + "行无法提交，费用日期为空！！！")
+                return false;
+            }
             if(isNull(field_name2_val)||0==field_name2_val){
                 top.Dialog.alert("明细第" + index + "行无法提交，汇率不得为空！！！")
                 return false;
@@ -352,9 +393,10 @@ $(document).ready(function(){
             var dollarsRateVal = $("#"+dollarsRate+"_"+num[i]).val();
             var factjeVal = $("#"+sbje_field+"_"+num[i]).val();
             var limitJeVal = $("#"+bz_field+"_"+num[i]).val();
-            var dayVal = $("#"+day+"_"+num[i]).val();
+            //var dayVal = $("#"+day+"_"+num[i]).val();
             var countryVal = $("#"+country+"_"+num[i]).val();
             var factRmb = factjeVal;
+
 
             if(isNull(startTimeVal)){
                 startTimeVal="00:00"
@@ -366,22 +408,29 @@ $(document).ready(function(){
 
             var start = startDateVal+" "+startTimeVal+":00"
             var end = endDateVal+" "+endTimeVal+":00"
+            //console.log("compareTime::")
             if(!compareTime(start,end)){
                 top.Dialog.alert("明细第"+index+"行无法提交, 开始时间要早于结束时间！！！")
                 return false;
             }
+            console.log("invoiceVal:"+invoiceVal)
+            console.log("dayAllowInvoceMainIds+\"-\"+accoomInvoceIDs+\"-\"+internationalTansInvoceIDs+\"-\"+internationalAccomInvoceIDs"+dayAllowInvoceMainIds+"-"+accoomInvoceIDs+"-"+internationalTansInvoceIDs+"-"+internationalAccomInvoceIDs)
+            console.log("countryVal::"+countryVal)
+            console.log("chinaId==countryVal"+(chinaId==countryVal))
+            console.log("factRmb::"+factRmb)
             if(""!=invoiceVal){
                 if((dayAllowInvoceMainIds+"-"+accoomInvoceIDs+"-"+internationalTansInvoceIDs+"-"+internationalAccomInvoceIDs).indexOf(invoiceVal)!=-1){
                     if (chinaId==countryVal) {//人名币处理
-                        //var limitRmb = Number(limitJeVal) * Number(dayVal)
                         var limitRmb = Number(limitJeVal)
+                        console.log("limitRmb：："+limitRmb)
                         if (Number(factRmb) >= Number(limitRmb)) {
                             top.Dialog.alert("明细第" + index + "行无法提交，报销额度超过执行标准！！！")
                             return false;
                         }
                     } else {
-                        //var limitRmb = Number(limitJeVal) * Number(dollarsRateVal) * Number(dayVal) * 1.1;//浮动%10
+                        console.log("dollarsRateVal::"+dollarsRateVal)
                         var limitRmb = Number(limitJeVal) * Number(dollarsRateVal)* 1.1;//浮动%10
+                        console.log("limit：："+limitRmb)
                         if (Number(factRmb) >= Number(limitRmb)) {//如果实报金额>执行标准*天数*美金汇率，不允许提交
                             top.Dialog.alert("明细第" + index + "行无法提交，报销额度超过执行标准！！！")
                             return false;
@@ -556,6 +605,5 @@ regBorwserEvent();
 /*餐补*/
 
 </script>
-
 
 
